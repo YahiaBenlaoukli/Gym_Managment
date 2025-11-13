@@ -9,8 +9,9 @@ function Dashboard() {
 
         <div>
             <Navbar />
-            <h1>Welcome to the Dashboard</h1>
-            <p>This is where you can manage your fitness activities.</p>
+            <div>
+
+            </div>
         </div>
     );
 }
