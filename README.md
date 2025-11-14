@@ -1,101 +1,217 @@
-# FitnessCity — Project Overview
+# E-Commerce Website
 
-Minimal documentation for the monorepo (client + server).
+A full-stack e-commerce platform built with React (frontend) and Node.js/Express (backend) with MySQL database. This project provides a complete solution for managing and browsing products online.
 
-## Layout
-- [server/server.js](server/server.js) — Express app bootstrap
-- [server/routes/auth.js](server/routes/auth.js) — Auth routes
-- [server/controllers/authController.js](server/controllers/authController.js) — Controllers: [`authController.newUser`](server/controllers/authController.js), [`authController.login`](server/controllers/authController.js), [`authController.getProfile`](server/controllers/authController.js)
-- [server/middleware/AuthenticationToken.js](server/middleware/AuthenticationToken.js) — Middleware: [`authenticateToken`](server/middleware/AuthenticationToken.js)
-- [server/db.js](server/db.js) — DB connection helper: [`getConnection`](server/db.js)
-- [server/request.rest](server/request.rest) — example REST request
-- [server/package.json](server/package.json) — server scripts & deps
+## 🎯 Project Goal
 
-- [client/package.json](client/package.json) — client scripts & deps
-- [client/src/App.js](client/src/App.js) — Router and app entry
-- [client/src/services/api.js](client/src/services/api.js) — axios instance: [`api`](client/src/services/api.js)
-- [client/src/components/Authentication/Authentication.jsx](client/src/components/Authentication/Authentication.jsx) — Login / Sign-up UI
-- [client/src/components/Navbar/Navbar.jsx](client/src/components/Navbar/Navbar.jsx) — Navbar + profile fetch
-- [client/src/components/Dashboard/Dashboard.jsx](client/src/components/Dashboard/Dashboard.jsx) — Dashboard screen
-- [client/public/index.html](client/public/index.html) — static HTML
+The goal of this project is to create a fully functional e-commerce website that allows users to:
+- Register and authenticate securely
+- Browse products by category
+- Search for products by name
+- View detailed product information
+- Manage products (admin functionality)
 
-- [.gitignore](.gitignore)
+## 🚀 Main Functionality
 
-## Quick start
+### User Authentication
+- **User Registration**: New users can create an account with username, email, and password
+- **User Login**: Secure authentication with JWT tokens
+- **User Profile**: View authenticated user profile information
 
-From repository root:
+### Product Management
+- **View All Products**: Display all available products in the system
+- **Browse by Category**: Filter products by category (Electronics, Clothing, Home & Garden, Sport, Books, etc.)
+- **Product Details**: View detailed information about a specific product
+- **Search Products**: Search for products by name with real-time filtering
+- **Category-based Search**: Search for products within a specific category
 
-1. Server
-   - cd server
-   - npm install
-   - create a `.env` with:
-     ```
-     DB_HOST=...
-     DB_USER=...
-     DB_PASSWORD=...
-     DB_NAME=...
-     ACCESS_TOKEN_SECRET=your_jwt_secret
-     PORT=3000
-     ```
-   - Run: `npm run dev` (uses nodemon)
+### Dashboard Interface
+- Interactive dashboard with intuitive UI for product browsing
+- Category selection dropdown
+- Product search functionality
+- Responsive design for mobile and desktop
 
-2. Client
-   - cd client
-   - npm install
-   - Run: `npm start`
+## 🛠️ Tech Stack
 
-## API (auth)
-- POST /api/auth/register → handled by [`authController.newUser`](server/controllers/authController.js)  
-  Example: [server/request.rest](server/request.rest)
-- POST /api/auth/login → handled by [`authController.login`](server/controllers/authController.js)
-- GET /api/auth/profile → protected by [`authenticateToken`](server/middleware/AuthenticationToken.js) and handled by [`authController.getProfile`](server/controllers/authController.js)
+### Frontend
+- **React 19** - UI library
+- **React Router** - Client-side routing
+- **Axios** - HTTP client for API requests
+- **CSS Modules** - Scoped styling
 
-Client uses [`api`](client/src/services/api.js) axios instance with `withCredentials: true`.
+### Backend
+- **Node.js** - Runtime environment
+- **Express.js** - Web framework
+- **MySQL** - Database
+- **JWT** - Authentication tokens
+- **bcrypt** - Password hashing
+- **cookie-parser** - Cookie management
+- **CORS** - Cross-origin resource sharing
 
-## Important notes & known issues (action items)
+## 📦 Setup Instructions
 
-1. Token transport mismatch
-   - Server sets cookie: `res.cookie('token', token, {httpOnly: true})` in [`authController.login`](server/controllers/authController.js).
-   - Middleware [`authenticateToken`](server/middleware/AuthenticationToken.js) expects a Bearer token in the `Authorization` header.
-   - Client (`client/src/services/api.js`) uses cookies (`withCredentials: true`) and does not send an Authorization header.
-   - Fix options:
-     - Read cookie server-side (install and use `cookie-parser`) and update [`authenticateToken`](server/middleware/AuthenticationToken.js) to check `req.cookies.token`, or
-     - Return token to client and have client set `Authorization: Bearer ...` on requests.
+### Prerequisites
+- Node.js (v14 or higher)
+- npm or yarn
+- MySQL database
+- Git
 
-2. CORS origin mismatch
-   - CORS in [server/server.js](server/server.js) allows origin `http://localhost:3001`, while the React dev server typically runs at `http://localhost:3000`. Update origin as needed.
+### Step 1: Clone the Repository
+```bash
+git clone <repository-url>
+cd Gym_Managment
+```
 
-3. Syntax / runtime issues in server controller
-   - [`authController.login`](server/controllers/authController.js) has an incomplete `catch` block and exporting order that will cause syntax/runtime errors. Review and ensure the `try/catch` is closed properly and `exports.login` is correctly defined.
+### Step 2: Database Setup
+1. Create a MySQL database for the project
+2. Create the required tables:
+   - `users` table with fields: `id`, `username`, `email`, `password`
+   - `products` table with fields: `id`, `name`, `category`, `price`, `description`, `image_path`
 
-4. Client-side minor bugs
-   - In [client/src/App.js](client/src/App.js) the root div uses `classname` instead of `className`.
-   - In [client/src/components/Dashboard/Dashboard.jsx](client/src/components/Dashboard/Dashboard.jsx) `import react from "react"` should be `import React from "react"` (or `import React, { useState } from "react";` if hooks used).
+### Step 3: Backend Setup
+1. Navigate to the server directory:
+   ```bash
+   cd server
+   ```
 
-5. Database
-   - Ensure MySQL has a `users` table matching fields used in [`authController.newUser`](server/controllers/authController.js) (`username`, `email`, `password`).
-   - See [server/db.js](server/db.js) for connection helper.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-## Suggestions / improvements
-- Use `cookie-parser` and secure cookies (set `sameSite`, `secure` when in production).
-- Use consistent token transport (prefer HTTP-only cookies for XSRF protection).
-- Add input validation and stronger error messages.
-- Add migrations or SQL schema file for `users` table.
-- Add tests for authentication flows.
+3. Create a `.env` file in the `server` directory with the following variables:
+   ```env
+   DB_HOST=localhost
+   DB_USER=your_mysql_username
+   DB_PASSWORD=your_mysql_password
+   DB_NAME=your_database_name
+   ACCESS_TOKEN_SECRET=your_jwt_secret_key_here
+   PORT=3000
+   ```
 
-## References (open files)
-- [server/server.js](server/server.js)  
-- [server/routes/auth.js](server/routes/auth.js)  
-- [server/controllers/authController.js](server/controllers/authController.js)  
-- [server/middleware/AuthenticationToken.js](server/middleware/AuthenticationToken.js)  
-- [server/db.js](server/db.js)  
-- [server/request.rest](server/request.rest)  
-- [server/package.json](server/package.json)  
-- [client/package.json](client/package.json)  
-- [client/src/services/api.js](client/src/services/api.js)  
-- [client/src/components/Authentication/Authentication.jsx](client/src/components/Authentication/Authentication.jsx)  
-- [client/src/components/Navbar/Navbar.jsx](client/src/components/Navbar/Navbar.jsx)  
-- [client/src/components/Dashboard/Dashboard.jsx](client/src/components/Dashboard/Dashboard.jsx)  
-- [client/src/App.js](client/src/App.js)  
-- [client/public/index.html](client/public/index.html)  
-- [.gitignore](.gitignore)
+4. Start the development server:
+   ```bash
+   npm run dev
+   ```
+   The server will run on `http://localhost:3000`
+
+### Step 4: Frontend Setup
+1. Open a new terminal and navigate to the client directory:
+   ```bash
+   cd client
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Start the React development server:
+   ```bash
+   npm start
+   ```
+   The client will run on `http://localhost:3001` (or another available port)
+
+### Step 5: Configuration
+1. **CORS Configuration**: Make sure the CORS origin in `server/server.js` matches your React app's URL (default: `http://localhost:3001`)
+
+2. **API Base URL**: The API base URL is configured in `client/src/services/api.js` as `http://localhost:3000/api`
+
+## 📚 API Endpoints
+
+### Authentication
+- `POST /api/auth/register` - Register a new user
+- `POST /api/auth/login` - Login user
+- `GET /api/auth/profile` - Get user profile (protected)
+
+### Products
+- `GET /api/product/showAllProducts` - Get all products (protected)
+- `POST /api/product/showProductsByCategory` - Get products by category (protected)
+- `POST /api/product/showProductDetails` - Get product details by ID (protected)
+- `POST /api/product/searchProductsByName` - Search products by name
+
+### Admin (Future)
+- Admin product management routes available at `/api/admin/product`
+
+## 📁 Project Structure
+
+```
+Gym_Managment/
+├── server/                 # Backend server
+│   ├── controllers/        # Request handlers
+│   │   ├── authController.js
+│   │   └── productController.js
+│   ├── routes/            # API routes
+│   │   ├── auth.js
+│   │   └── product.js
+│   ├── middleware/        # Authentication middleware
+│   ├── services/          # Database connection
+│   └── server.js          # Express app entry point
+│
+└── client/                # Frontend React app
+    ├── src/
+    │   ├── components/    # React components
+    │   │   ├── Authentication/
+    │   │   ├── Dashboard/
+    │   │   └── Navbar/
+    │   ├── services/      # API service
+    │   └── App.js         # Main app component
+    └── public/            # Static files
+```
+
+## 🔒 Authentication
+
+The application uses JWT (JSON Web Tokens) for authentication. Tokens are stored in HTTP-only cookies for security. All product endpoints (except search) require authentication.
+
+## 🗄️ Database Schema
+
+### Users Table
+- `id` (INT, PRIMARY KEY, AUTO_INCREMENT)
+- `username` (VARCHAR, UNIQUE)
+- `email` (VARCHAR, UNIQUE)
+- `password` (VARCHAR, hashed with bcrypt)
+
+### Products Table
+- `id` (INT, PRIMARY KEY, AUTO_INCREMENT)
+- `name` (VARCHAR)
+- `category` (VARCHAR)
+- `price` (DECIMAL)
+- `description` (TEXT)
+- `image_path` (VARCHAR)
+
+## 🚧 Known Issues & Future Improvements
+
+### Current Issues
+- Token authentication needs to be consistent between cookie and header-based auth
+- CORS origin may need adjustment based on your setup
+- Database schema should be documented with SQL migration files
+
+### Planned Features
+- Shopping cart functionality
+- Checkout and payment integration
+- Order management
+- Product reviews and ratings
+- User profile management
+- Admin dashboard for product management
+- Image upload functionality
+- Product filtering and sorting
+- Pagination for product listings
+
+## 📝 Notes
+
+- The server runs on port 3000 by default
+- The client runs on port 3001 by default (React default is 3000, but this project uses 3001)
+- Make sure MySQL is running before starting the server
+- All API requests from the client include credentials (cookies) automatically
+- The project uses CSS Modules for component styling to avoid style conflicts
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
+
+## 📄 License
+
+This project is open source and available under the MIT License.
