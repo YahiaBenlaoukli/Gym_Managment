@@ -63,3 +63,23 @@ exports.showproductdetails = async (req, res) => {
         return res.status(500).json({ error: "Internal server error." });
     }
 }
+
+exports.searchproductsbyname = async (req, res) => {
+    const { q } = req.body;
+    if (!q) {
+        console.error("Validation error: Missing search query.");
+        return res.status(400).json({ error: "Search query is required." });
+    }
+    try {
+        const connection = await getConnection();
+        console.log("Connected to the database successfully.");
+        const [products] = await connection.promise().query(
+            "SELECT id, name, image_path FROM products WHERE name LIKE ? ORDER BY name LIMIT 10",
+            [`${q}%`]
+        );
+        return res.status(200).json({ products });
+    } catch (error) {
+        console.error("Database error:", error);
+        return res.status(500).json({ error: "Internal server error." });
+    }
+}

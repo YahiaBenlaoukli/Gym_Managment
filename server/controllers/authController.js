@@ -1,5 +1,6 @@
 const getConnection = require("../services/db.js");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 
 exports.newUser = async (req, res) => {
