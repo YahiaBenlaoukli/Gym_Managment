@@ -1,0 +1,12 @@
+POST http://localhost:3000/api/admin/product/adminaddproduct
+Content-Type: application/json
+
+{
+    "name": "Treadmill X200",
+    "category": "Sport",
+    "price": 1200,
+    "description": "High-performance treadmill with advanced features.",
+    "stock": 15
+}
+
+####

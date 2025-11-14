@@ -4,7 +4,6 @@ import styles from "./Authentication.module.css";
 import { FaUser, FaLock, FaEnvelope } from "react-icons/fa";
 import { Dumbbell } from "lucide-react";
 import api from "../../services/api";
-import cn from "classnames";
 
 
 function Authentication() {
@@ -22,10 +21,10 @@ function Authentication() {
     const navigate = useNavigate();
 
     const handleChange = (e) => {
-        if(action === "Login")
+        if (action === "Login")
             setLoginData({ ...loginData, [e.target.name]: e.target.value });
-        else if(action === "Sign Up")
-        setSignupData({ ...signupData, [e.target.name]: e.target.value });
+        else if (action === "Sign Up")
+            setSignupData({ ...signupData, [e.target.name]: e.target.value });
     };
 
     const handleSignup = async (e) => {
@@ -72,32 +71,32 @@ function Authentication() {
                     {action === "Sign Up" && (
                         <div className={styles.input}>
                             <FaUser style={{ margin: '0px 30px' }} />
-                            <input 
-                                type="text" 
+                            <input
+                                type="text"
                                 name="username"
-                                placeholder="Username" 
-                                value={signupData.username} 
+                                placeholder="Username"
+                                value={signupData.username}
                                 onChange={handleChange}
                             />
                         </div>
                     )}
                     <div className={styles.input}>
                         <FaEnvelope style={{ margin: '0px 30px' }} />
-                        <input 
-                            type="email" 
+                        <input
+                            type="email"
                             name="email"
-                            placeholder="Email" 
-                            value={action === "Login" ? loginData.email : signupData.email} 
-                            onChange={handleChange} 
+                            placeholder="Email"
+                            value={action === "Login" ? loginData.email : signupData.email}
+                            onChange={handleChange}
                         />
                     </div>
                     <div className={styles.input}>
                         <FaLock style={{ margin: '0px 30px' }} />
-                        <input 
-                            type="password" 
+                        <input
+                            type="password"
                             name="password"
-                            placeholder="Password" 
-                            value={action === "Login" ? loginData.password : signupData.password} 
+                            placeholder="Password"
+                            value={action === "Login" ? loginData.password : signupData.password}
                             onChange={handleChange}
                         />
                     </div>
@@ -109,8 +108,8 @@ function Authentication() {
                 )}
 
                 <div className={styles.submitContainer}>
-                    <div 
-                        className={action === "Login" ? `${styles.submit} ${styles.gray}` : styles.submit} 
+                    <div
+                        className={action === "Login" ? `${styles.submit} ${styles.gray}` : styles.submit}
                         onClick={() => {
                             if (action === "Login") {
                                 setAction("Sign Up");
@@ -121,8 +120,8 @@ function Authentication() {
                     >
                         Sign Up
                     </div>
-                    <div 
-                        className={action === "Sign Up" ? `${styles.submit} ${styles.gray}` : styles.submit} 
+                    <div
+                        className={action === "Sign Up" ? `${styles.submit} ${styles.gray}` : styles.submit}
                         onClick={() => {
                             if (action === "Sign Up") {
                                 setAction("Login");
