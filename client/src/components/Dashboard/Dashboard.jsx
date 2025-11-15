@@ -1,6 +1,5 @@
 import React from "react";
 import { useState } from "react";
-import styles from "./Dashboard.module.css";
 import Navbar from "../Navbar/Navbar.jsx";
 import api from "../../services/api";
 
@@ -137,128 +136,156 @@ function Dashboard() {
     };
 
     return (
-        <div className={styles.dashboard}>
+        <div className="min-h-screen bg-gradient-to-br from-secondary via-primary to-[#2d2d00] pb-10 px-2.5 sm:px-5">
             <Navbar />
-            <div className={styles.dashboardContainer}>
-                <div className={styles.dashboardHeader}>
-                    <h1 className={styles.dashboardTitle}>Product Management</h1>
-                    <p className={styles.dashboardSubtitle}>Manage and view products</p>
+            <div className="max-w-6xl mx-auto py-10 px-5 sm:px-10 md:py-15 lg:py-20">
+                <div className="text-center mb-8 sm:mb-10">
+                    <h1 className="text-white text-3xl sm:text-4xl lg:text-5xl font-bold mb-2.5 drop-shadow-[0_0_20px_rgba(255,235,59,0.3)] tracking-tight">
+                        Product Management
+                    </h1>
+                    <p className="text-inactive-text text-base sm:text-lg">
+                        Manage and view products
+                    </p>
                 </div>
 
-                <div className={styles.dashboardContent}>
-                    <div className={styles.apiSection}>
-                        <h2 className={styles.sectionTitle}>Product APIs</h2>
+                <div className="flex flex-col gap-6 sm:gap-7.5">
+                    <div className="bg-[rgba(26,26,26,0.95)] backdrop-blur-sm border border-accent/20 rounded-2xl p-6 sm:p-7.5 lg:p-8 shadow-[0_20px_40px_rgba(0,0,0,0.5),0_0_20px_rgba(255,235,59,0.1)]">
+                        <h2 className="text-white text-xl sm:text-2xl font-bold mb-6 drop-shadow-[0_0_15px_rgba(255,235,59,0.3)] tracking-tight border-b-2 border-accent pb-2.5">
+                            Product APIs
+                        </h2>
 
-                        <div className={styles.buttonGroup}>
+                        <div className="mb-5">
                             <button
-                                className={styles.apiButton}
+                                className="w-full h-12 sm:h-14 bg-accent text-secondary rounded-full text-sm sm:text-base font-semibold uppercase tracking-wide cursor-pointer transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(255,235,59,0.4)] active:translate-y-0 active:shadow-[0_5px_15px_rgba(255,235,59,0.3)] disabled:opacity-60 disabled:cursor-not-allowed relative overflow-hidden"
                                 onClick={handleShowAllProducts}
                                 disabled={loading}
                             >
-                                <span>Show All Products</span>
+                                <span className="relative z-10">Show All Products</span>
                             </button>
                         </div>
 
-                        <div className={styles.inputGroup}>
-                            <label className={styles.inputLabel}>Select Category</label>
-                            <div className={styles.input}>
+                        <div className="mb-5">
+                            <label className="block text-white text-sm sm:text-base font-semibold mb-2.5">
+                                Select Category
+                            </label>
+                            <div className="flex items-center w-full h-14 sm:h-16 bg-input-bg rounded-lg border-2 border-transparent transition-all duration-300 relative overflow-hidden mb-4 focus-within:border-accent focus-within:shadow-[0_0_15px_rgba(255,235,59,0.3)]">
                                 <select
                                     value={selectedCategory}
                                     onChange={(e) => setSelectedCategory(e.target.value)}
-                                    className={styles.selectInput}
+                                    className="flex-1 h-full bg-transparent border-none outline-none text-white text-sm sm:text-base px-5 pr-12 cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%23b0b0b0\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e')] bg-no-repeat bg-[right_20px_center] bg-[length:20px]"
                                 >
-                                    <option value="">-- Select a category --</option>
+                                    <option value="" className="bg-input-bg text-white">-- Select a category --</option>
                                     {categories.map((cat) => (
-                                        <option key={cat} value={cat}>
+                                        <option key={cat} value={cat} className="bg-input-bg text-white">
                                             {cat}
                                         </option>
                                     ))}
                                 </select>
                             </div>
                             <button
-                                className={styles.apiButton}
+                                className="w-full h-12 sm:h-14 bg-accent text-secondary rounded-full text-sm sm:text-base font-semibold uppercase tracking-wide cursor-pointer transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(255,235,59,0.4)] active:translate-y-0 active:shadow-[0_5px_15px_rgba(255,235,59,0.3)] disabled:opacity-60 disabled:cursor-not-allowed relative overflow-hidden"
                                 onClick={handleShowProductsByCategory}
                                 disabled={loading || !selectedCategory}
                             >
-                                <span>Show Products by Category</span>
+                                <span className="relative z-10">Show Products by Category</span>
                             </button>
                         </div>
 
                         {selectedCategory && (
-                            <div className={styles.inputGroup}>
-                                <label className={styles.inputLabel}>
+                            <div className="mb-5">
+                                <label className="block text-white text-sm sm:text-base font-semibold mb-2.5">
                                     Search in "{selectedCategory}"
                                 </label>
-                                <div className={styles.input}>
+                                <div className="flex items-center w-full h-14 sm:h-16 bg-input-bg rounded-lg border-2 border-transparent transition-all duration-300 relative overflow-hidden mb-4 focus-within:border-accent focus-within:shadow-[0_0_15px_rgba(255,235,59,0.3)]">
                                     <input
                                         type="text"
                                         placeholder="Enter product name to search"
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
+                                        className="flex-1 h-full bg-transparent border-none outline-none text-white text-sm sm:text-base px-5 placeholder:text-inactive-text relative z-10"
                                     />
                                 </div>
                                 <button
-                                    className={styles.apiButton}
+                                    className="w-full h-12 sm:h-14 bg-accent text-secondary rounded-full text-sm sm:text-base font-semibold uppercase tracking-wide cursor-pointer transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(255,235,59,0.4)] active:translate-y-0 active:shadow-[0_5px_15px_rgba(255,235,59,0.3)] disabled:opacity-60 disabled:cursor-not-allowed relative overflow-hidden"
                                     onClick={handleSearchInCategory}
                                     disabled={loading}
                                 >
-                                    <span>Search in Category</span>
+                                    <span className="relative z-10">Search in Category</span>
                                 </button>
                             </div>
                         )}
 
-                        <div className={styles.inputGroup}>
-                            <label className={styles.inputLabel}>Product ID</label>
-                            <div className={styles.input}>
+                        <div className="mb-5">
+                            <label className="block text-white text-sm sm:text-base font-semibold mb-2.5">
+                                Product ID
+                            </label>
+                            <div className="flex items-center w-full h-14 sm:h-16 bg-input-bg rounded-lg border-2 border-transparent transition-all duration-300 relative overflow-hidden mb-4 focus-within:border-accent focus-within:shadow-[0_0_15px_rgba(255,235,59,0.3)]">
                                 <input
                                     type="text"
                                     placeholder="Enter product ID"
                                     value={productId}
                                     onChange={(e) => setProductId(e.target.value)}
+                                    className="flex-1 h-full bg-transparent border-none outline-none text-white text-sm sm:text-base px-5 placeholder:text-inactive-text relative z-10"
                                 />
                             </div>
                             <button
-                                className={styles.apiButton}
+                                className="w-full h-12 sm:h-14 bg-accent text-secondary rounded-full text-sm sm:text-base font-semibold uppercase tracking-wide cursor-pointer transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(255,235,59,0.4)] active:translate-y-0 active:shadow-[0_5px_15px_rgba(255,235,59,0.3)] disabled:opacity-60 disabled:cursor-not-allowed relative overflow-hidden"
                                 onClick={handleShowProductDetails}
                                 disabled={loading}
                             >
-                                <span>Show Product Details</span>
+                                <span className="relative z-10">Show Product Details</span>
                             </button>
                         </div>
                     </div>
 
                     {loading && (
-                        <div className={styles.loadingMessage}>Loading...</div>
+                        <div className="text-center text-accent text-base sm:text-lg font-semibold py-5 bg-[rgba(255,235,59,0.1)] rounded-lg border border-accent">
+                            Loading...
+                        </div>
                     )}
 
                     {error && (
-                        <div className={styles.errorMessage}>{error}</div>
+                        <div className="text-center text-[#ff4757] text-sm sm:text-base font-semibold py-5 bg-[rgba(255,71,87,0.1)] rounded-lg border border-[#ff4757]">
+                            {error}
+                        </div>
                     )}
 
                     {products && products.length > 0 && (
-                        <div className={styles.resultsSection}>
-                            <h2 className={styles.sectionTitle}>Products ({products.length})</h2>
-                            <div className={styles.productsGrid}>
+                        <div className="bg-[rgba(26,26,26,0.95)] backdrop-blur-sm border border-accent/20 rounded-2xl p-6 sm:p-7.5 lg:p-8 shadow-[0_20px_40px_rgba(0,0,0,0.5),0_0_20px_rgba(255,235,59,0.1)]">
+                            <h2 className="text-white text-xl sm:text-2xl font-bold mb-5 drop-shadow-[0_0_15px_rgba(255,235,59,0.3)] tracking-tight border-b-2 border-accent pb-2.5">
+                                Products ({products.length})
+                            </h2>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mt-5">
                                 {products.map((prod) => (
-                                    <div key={prod.id} className={styles.productCard}>
-                                        <h3 className={styles.productName}>{prod.name}</h3>
+                                    <div key={prod.id} className="bg-input-bg border-2 border-accent/20 rounded-2xl p-5 transition-all duration-300 hover:border-accent hover:shadow-[0_10px_25px_rgba(255,235,59,0.3)] hover:-translate-y-1">
+                                        <h3 className="text-white text-lg sm:text-xl font-bold mb-4 drop-shadow-[0_0_10px_rgba(255,235,59,0.3)] tracking-tight">
+                                            {prod.name}
+                                        </h3>
                                         {prod.image_path && (
                                             <img
                                                 src={prod.image_path}
                                                 alt={prod.name}
-                                                className={styles.productImage}
+                                                className="w-full h-auto rounded-lg mb-4 max-h-[300px] object-cover"
                                             />
                                         )}
                                         {prod.category && (
-                                            <p className={styles.productCategory}>Category: {prod.category}</p>
+                                            <p className="text-inactive-text text-sm sm:text-base mb-2.5">
+                                                Category: {prod.category}
+                                            </p>
                                         )}
                                         {prod.price && (
-                                            <p className={styles.productPrice}>Price: ${prod.price}</p>
+                                            <p className="text-accent text-base sm:text-lg font-semibold mb-2.5">
+                                                Price: ${prod.price}
+                                            </p>
                                         )}
                                         {prod.description && (
-                                            <p className={styles.productDescription}>{prod.description}</p>
+                                            <p className="text-white text-sm sm:text-base leading-relaxed mb-2.5">
+                                                {prod.description}
+                                            </p>
                                         )}
-                                        <p className={styles.productId}>ID: {prod.id}</p>
+                                        <p className="text-inactive-text text-xs sm:text-sm mt-2.5 pt-2.5 border-t border-accent/20">
+                                            ID: {prod.id}
+                                        </p>
                                     </div>
                                 ))}
                             </div>
@@ -266,33 +293,47 @@ function Dashboard() {
                     )}
 
                     {product && (
-                        <div className={styles.resultsSection}>
-                            <h2 className={styles.sectionTitle}>Product Details</h2>
-                            <div className={`${styles.productCard} ${styles.detailed}`}>
-                                <h3 className={styles.productName}>{product.name}</h3>
+                        <div className="bg-[rgba(26,26,26,0.95)] backdrop-blur-sm border border-accent/20 rounded-2xl p-6 sm:p-7.5 lg:p-8 shadow-[0_20px_40px_rgba(0,0,0,0.5),0_0_20px_rgba(255,235,59,0.1)]">
+                            <h2 className="text-white text-xl sm:text-2xl font-bold mb-5 drop-shadow-[0_0_15px_rgba(255,235,59,0.3)] tracking-tight border-b-2 border-accent pb-2.5">
+                                Product Details
+                            </h2>
+                            <div className="bg-input-bg border-2 border-accent/20 rounded-2xl p-5 max-w-2xl mx-auto transition-all duration-300 hover:border-accent hover:shadow-[0_10px_25px_rgba(255,235,59,0.3)] hover:-translate-y-1">
+                                <h3 className="text-white text-lg sm:text-xl font-bold mb-4 drop-shadow-[0_0_10px_rgba(255,235,59,0.3)] tracking-tight">
+                                    {product.name}
+                                </h3>
                                 {product.image_path && (
                                     <img
                                         src={product.image_path}
                                         alt={product.name}
-                                        className={styles.productImage}
+                                        className="w-full h-auto rounded-lg mb-4 max-h-[300px] object-cover"
                                     />
                                 )}
                                 {product.category && (
-                                    <p className={styles.productCategory}>Category: {product.category}</p>
+                                    <p className="text-inactive-text text-sm sm:text-base mb-2.5">
+                                        Category: {product.category}
+                                    </p>
                                 )}
                                 {product.price && (
-                                    <p className={styles.productPrice}>Price: ${product.price}</p>
+                                    <p className="text-accent text-base sm:text-lg font-semibold mb-2.5">
+                                        Price: ${product.price}
+                                    </p>
                                 )}
                                 {product.description && (
-                                    <p className={styles.productDescription}>{product.description}</p>
+                                    <p className="text-white text-sm sm:text-base leading-relaxed mb-2.5">
+                                        {product.description}
+                                    </p>
                                 )}
-                                <p className={styles.productId}>ID: {product.id}</p>
+                                <p className="text-inactive-text text-xs sm:text-sm mt-2.5 pt-2.5 border-t border-accent/20">
+                                    ID: {product.id}
+                                </p>
                             </div>
                         </div>
                     )}
 
                     {products && products.length === 0 && (
-                        <div className={styles.noResults}>No products found</div>
+                        <div className="text-center text-inactive-text text-base sm:text-lg py-10 bg-[rgba(26,26,26,0.95)] rounded-2xl border border-accent/20">
+                            No products found
+                        </div>
                     )}
                 </div>
             </div>

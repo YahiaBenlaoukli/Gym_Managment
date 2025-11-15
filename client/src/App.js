@@ -9,7 +9,7 @@ import Dashboard from "./components/Dashboard/Dashboard.jsx";
 function App() {
   return (
     <Router>
-      <div classname = "App">
+      <div className="App">
       <Routes>    
         <Route path="/" element={<Authentication />} />
         <Route path="/dashboard" element={<Dashboard />} />
