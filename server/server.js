@@ -10,6 +10,7 @@ app.use(express.json());
 app.use(cookieParser());
 const authRoutes = require('./routes/auth.js');
 const productRoutes = require('./routes/product.js');
+const adminAuthRoutes = require('./routes/adminRoutes/adminAuth.js');
 const adminProductRoutes = require('./routes/adminRoutes/adminProduct.js');
 app.use(cors({
     origin: 'http://localhost:3001', // The address of your React app
@@ -20,6 +21,7 @@ app.use(cors({
 
 app.use('/api/auth', authRoutes);
 app.use('/api/product', productRoutes);
+app.use('/api/admin/auth', adminAuthRoutes);
 app.use('/api/admin/product', adminProductRoutes);
 
 const PORT = process.env.PORT || 3000;

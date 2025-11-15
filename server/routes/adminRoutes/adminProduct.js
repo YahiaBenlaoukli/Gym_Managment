@@ -1,10 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const productController = require('../../controllers/adminControllers/adminProductController.js');
-const authenticateToken = require('../../middleware/AuthenticationToken.js')
+const adminproductController = require('../../controllers/adminControllers/adminProductController.js');
+const productController = require('../../controllers/productController.js');
+const authenticateToken = require('../../middleware/adminAuthenticateToken.js')
 
-router.post("/adminAddProduct", authenticateToken, productController.adminAddProduct);
-router.delete("/adminDeleteProduct", authenticateToken, productController.adminDeleteProduct);
-router.put("/adminUpdateProduct", authenticateToken, productController.adminUpdateProduct);
+router.post("/adminAddProduct", authenticateToken, adminproductController.adminAddProduct);
+router.delete("/adminDeleteProduct", authenticateToken, adminproductController.adminDeleteProduct);
+router.put("/adminUpdateProduct", authenticateToken, adminproductController.adminUpdateProduct);
+router.put("/adminDiscountProduct", authenticateToken, adminproductController.adminDiscountProduct);
+router.get("/showAllProducts", authenticateToken, productController.showallproducts);
+router.post("/showProductDetails", authenticateToken, productController.showproductdetails);
+router.post("/searchProductsByName", authenticateToken, productController.searchproductsbyname);
 
 module.exports = router;    

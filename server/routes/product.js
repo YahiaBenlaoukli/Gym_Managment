@@ -6,6 +6,6 @@ const authenticateToken = require('../middleware/AuthenticationToken.js')
 router.post("/showProductsByCategory", authenticateToken, productController.showproductsbycategory);
 router.get("/showAllProducts", authenticateToken, productController.showallproducts);
 router.post("/showProductDetails", authenticateToken, productController.showproductdetails);
-router.post("/searchProductsByName", productController.searchproductsbyname);
+router.post("/searchProductsByName", authenticateToken, productController.searchproductsbyname);
 
 module.exports = router;

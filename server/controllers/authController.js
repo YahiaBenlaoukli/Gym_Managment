@@ -78,4 +78,10 @@ exports.login = async (req, res) => {
 exports.getProfile = (req, res) => {
     // req.user is attached by the authenticateToken middleware.
     res.json({ user: req.user });
+
+};
+
+exports.logout = (req, res) => {
+    res.clearCookie('token');
+    res.status(200).json({ message: "Logout successful." });
 };
