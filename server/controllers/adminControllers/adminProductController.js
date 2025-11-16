@@ -85,3 +85,18 @@ exports.adminDiscountProduct = async (req, res) => {
         return res.status(500).json({ error: "Internal server error." });
     }
 };
+
+exports.dashboardStats = async (req, res) => {
+    try {
+        const connection = await getConnection();
+        console.log("Connected to the database successfully.");
+        const [totalProducts] = await connection.promise().query("SELECT COUNT(id) AS total FROM products");
+
+        const [lowStockList] = await connection.promise().query("SELECT id, name, category, current_price, stock FROM products WHERE stock <= 10");
+
+        return res.status(200).json({ totalProducts: totalProducts[0].total, lowStockCount: lowStockList.length, lowStockList });
+    } catch (error) {
+        console.error("Database error:", error);
+        return res.status(500).json({ error: "Internal server error." });
+    }
+};

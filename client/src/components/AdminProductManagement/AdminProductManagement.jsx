@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import React, { useState } from 'react';
 import api from '../../services/api';
 
@@ -37,12 +38,42 @@ const AdminProductManagement = () => {
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [showDiscountModal, setShowDiscountModal] = useState(false);
 
+    // Dashboard Stats
+    const [productsCount, setProductsCount] = useState(0);
+    const [productsLowStock, setProductsLowStock] = useState(0);
+    const [lowStockProducts, setLowStockProducts] = useState([]); // <-- ADDED STATE
+
     // Update Modal State
     const [updateField, setUpdateField] = useState('');
     const [updateValue, setUpdateValue] = useState('');
 
     // Discount Modal State
     const [discountPrice, setDiscountPrice] = useState('');
+
+
+    useEffect(() => {
+        try {
+            fetchDashboardStats();
+        } catch (error) {
+            setError('Failed to fetch dashboard stats');
+        }
+    }, []);
+
+    const fetchDashboardStats = async () => {
+        setLoading(true);
+        setError(null);
+        setMessage(null);
+        try {
+            const res = await api.get('admin/product/dashboardStats');
+            setProductsCount(res.data.totalProducts || 0);
+            setProductsLowStock(res.data.lowStockCount || 0);
+            setLowStockProducts(res.data.lowStockList || []); // <-- UPDATED to store list
+        } catch (err) {
+            setError(err.response?.data?.error || 'Failed to fetch dashboard stats');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     // Fetch all products
     const fetchAllProducts = async () => {
@@ -94,6 +125,7 @@ const AdminProductManagement = () => {
             setMessage(response.data.message);
             setAddProductData({ name: '', category: '', price: '', description: '', stock: '' });
             setTimeout(() => setMessage(null), 3000);
+            fetchDashboardStats(); // Refresh stats after adding
         } catch (err) {
             setError(err.response?.data?.error || 'Error adding product');
         } finally {
@@ -119,6 +151,7 @@ const AdminProductManagement = () => {
             setShowDeleteModal(false);
             setSelectedProduct(null);
             fetchAllProducts();
+            fetchDashboardStats(); // Refresh stats after deleting
             setTimeout(() => setMessage(null), 3000);
         } catch (err) {
             setError(err.response?.data?.error || 'Error deleting product');
@@ -153,6 +186,7 @@ const AdminProductManagement = () => {
             setShowUpdateModal(false);
             setSelectedProduct(null);
             fetchAllProducts();
+            fetchDashboardStats(); // Refresh stats after updating
             setTimeout(() => setMessage(null), 3000);
         } catch (err) {
             setError(err.response?.data?.error || 'Error updating product');
@@ -194,6 +228,26 @@ const AdminProductManagement = () => {
         }
     };
 
+    // --- NEW HANDLERS ---
+
+    /**
+     * Sets the view back to the dashboard and refreshes stats.
+     */
+    const showDashboard = () => {
+        setActiveView('dashboard');
+        fetchDashboardStats();
+    };
+
+    /**
+     * Sets the products list to only low stock items and shows the product table.
+     */
+    const showLowStockProducts = () => {
+        setProducts(lowStockProducts);
+        setActiveView('products');
+    };
+
+    // ----------------------
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-secondary via-primary to-[#2d2d00]">
             {/* Navbar */}
@@ -201,6 +255,17 @@ const AdminProductManagement = () => {
                 <div className="max-w-7xl mx-auto px-5 py-4">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
+                            {/* --- ADDED DASHBOARD BUTTON --- */}
+                            <button
+                                onClick={showDashboard}
+                                className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${activeView === 'dashboard'
+                                    ? 'bg-accent text-secondary shadow-[0_0_15px_rgba(255,235,59,0.4)]'
+                                    : 'bg-transparent text-white border-2 border-accent/30 hover:border-accent'
+                                    }`}
+                            >
+                                Dashboard
+                            </button>
+                            {/* ----------------------------- */}
                             <button
                                 onClick={() => setActiveView('add')}
                                 className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${activeView === 'add'
@@ -272,13 +337,20 @@ const AdminProductManagement = () => {
                         </p>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div className="bg-input-bg border-2 border-accent/20 rounded-xl p-6 text-center hover:border-accent transition-all duration-300">
-                                <div className="text-accent text-4xl font-bold mb-2">{products.length}</div>
+                                <div className="text-accent text-4xl font-bold mb-2">{productsCount}</div>
                                 <div className="text-white text-sm">Total Products</div>
                             </div>
-                            <div className="bg-input-bg border-2 border-accent/20 rounded-xl p-6 text-center hover:border-accent transition-all duration-300">
-                                <div className="text-accent text-4xl font-bold mb-2">0</div>
+
+                            {/* --- UPDATED LOW STOCK CARD --- */}
+                            <div
+                                className="bg-input-bg border-2 border-accent/20 rounded-xl p-6 text-center hover:border-accent transition-all duration-300 cursor-pointer"
+                                onClick={showLowStockProducts}
+                            >
+                                <div className="text-accent text-4xl font-bold mb-2">{productsLowStock}</div>
                                 <div className="text-white text-sm">Low Stock Items</div>
                             </div>
+                            {/* ------------------------------ */}
+
                             <div className="bg-input-bg border-2 border-accent/20 rounded-xl p-6 text-center hover:border-accent transition-all duration-300">
                                 <div className="text-accent text-4xl font-bold mb-2">{categories.length}</div>
                                 <div className="text-white text-sm">Categories</div>
@@ -394,7 +466,7 @@ const AdminProductManagement = () => {
                                                 <td className="text-white text-sm py-4 px-4">{product.name}</td>
                                                 <td className="text-inactive-text text-sm py-4 px-4">{product.category}</td>
                                                 <td className="text-accent text-sm font-semibold py-4 px-4">${product.current_price}</td>
-                                                <td className="text-white text-sm py-4 px-4">{product.stock}</td>
+                                                <td className={`text-sm py-4 px-4 ${product.stock < 10 ? 'text-[#ff4757] font-bold' : 'text-white'}`}>{product.stock}</td>
                                                 <td className="text-sm py-4 px-4">
                                                     <div className="flex gap-2">
                                                         <button
@@ -548,7 +620,7 @@ const AdminProductManagement = () => {
                             <button
                                 onClick={handleDiscountProduct}
                                 disabled={loading}
-                                className="flex-1 h-12 bg-[#3498db] text-white rounded-full text-sm font-semibold transition-all hover:shadow-[0_0_15px_rgba(52,152,219,0.4)] disabled:opacity-60"
+                                className="flex-1 h-12 bg-accent text-secondary rounded-full text-sm font-semibold transition-all hover:shadow-[0_0_15px_rgba(255,235,59,0.4)] disabled:opacity-60"
                             >
                                 Apply Discount
                             </button>
