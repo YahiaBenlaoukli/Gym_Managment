@@ -1,7 +1,9 @@
 import React from "react";
 import { useState } from "react";
-import Navbar from "../Navbar/Navbar.jsx";
-import api from "../../services/api";
+import Hero from "../../components/Hero/Hero.jsx";
+import Navbar from "../../components/Navbar/Navbar.jsx";
+import ShopByCategory from "../../components/Categories/Categories.jsx";
+import api from "../../services/api.js";
 
 function Dashboard() {
     const categories = [
@@ -138,6 +140,8 @@ function Dashboard() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-secondary via-primary to-[#2d2d00] pb-10 px-2.5 sm:px-5">
             <Navbar />
+            <Hero />
+            <ShopByCategory />S
             <div className="max-w-6xl mx-auto py-10 px-5 sm:px-10 md:py-15 lg:py-20">
                 <div className="text-center mb-8 sm:mb-10">
                     <h1 className="text-white text-3xl sm:text-4xl lg:text-5xl font-bold mb-2.5 drop-shadow-[0_0_20px_rgba(255,235,59,0.3)] tracking-tight">

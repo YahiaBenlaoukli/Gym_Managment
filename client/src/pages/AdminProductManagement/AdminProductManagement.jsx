@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 
 const AdminProductManagement = () => {
@@ -9,6 +10,7 @@ const AdminProductManagement = () => {
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState(null);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     const categories = [
         "Electronics",
@@ -228,6 +230,16 @@ const AdminProductManagement = () => {
         }
     };
 
+    const handleLogout = () => {
+        console.log('Logout clicked');
+        api.post('admin/auth/adminLogout').then(res => {
+            console.log(res);
+        }).catch(err => {
+            console.log(err);
+        });
+        navigate('/admin');
+    };
+
     // --- NEW HANDLERS ---
 
     /**
@@ -283,6 +295,12 @@ const AdminProductManagement = () => {
                                 className="px-6 py-2.5 bg-accent text-secondary rounded-full text-sm font-semibold transition-all duration-300 hover:shadow-[0_0_15px_rgba(255,235,59,0.4)] disabled:opacity-60"
                             >
                                 Show All Products
+                            </button>
+                            <button
+                                onClick={handleLogout}
+                                className="flex items-center gap-3 py-4 px-5 text-[#ff4757] cursor-pointer transition-all duration-300 border-none bg-none w-full text-left text-base font-medium border-t border-[rgba(255,235,59,0.2)] mt-1.25 hover:bg-[rgba(255,71,87,0.1)] hover:text-[#ff3742]"
+                            >
+                                Logout
                             </button>
                             <div className="flex items-center gap-2">
                                 <input

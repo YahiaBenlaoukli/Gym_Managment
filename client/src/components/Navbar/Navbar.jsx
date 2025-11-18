@@ -81,7 +81,7 @@ const Navbar = () => {
       <ul className={`${isMenuOpen ? 'flex' : 'hidden'} md:flex flex-col md:flex-row gap-2.5 md:gap-6 sm:gap-8 flex-1 justify-center list-none m-0 p-0 absolute md:relative top-full left-0 right-0 md:top-auto md:left-auto md:right-auto w-full md:w-auto bg-primary md:bg-transparent rounded-2xl mt-4 md:mt-0 p-5 md:p-0 shadow-[0_10px_30px_rgba(0,0,0,0.3)] md:shadow-none border-2 md:border-0 border-accent md:border-transparent z-40`}>
         <li className="relative inline-block m-0 text-lg cursor-pointer w-full md:w-auto text-center md:text-left">
           <Link
-            to="/home"
+            to="/dashboard"
             onClick={() => setIsMenuOpen(false)}
             className="text-white no-underline font-semibold py-3 px-5 md:py-3 md:px-5 rounded-full md:rounded-full transition-all duration-300 relative bg-transparent border-2 border-transparent hover:text-accent hover:bg-[rgba(255,235,59,0.1)] hover:border-accent hover:-translate-y-0.5 hover:shadow-[0_8px_25px_rgba(255,235,59,0.3)] active:translate-y-0 block w-full md:w-auto py-4 md:py-3 rounded-xl md:rounded-full"
           >

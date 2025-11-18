@@ -2,13 +2,13 @@ import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 //all the components
-import Authentication from "./components/Authentication/Authentication.jsx";
-import Dashboard from "./components/Dashboard/Dashboard.jsx";
-
+import Authentication from "./pages/Authentication/Authentication.jsx";
+import Dashboard from "./pages/Dashboard/Dashboard.jsx";
+import SearchPage from "./pages/SearchPageCat/SearchPageCat.jsx";
 
 //admin components
-import AdminLogin from "./components/AdminAuthentication/AdminAuthentication.jsx";
-import AdminProductManagement from "./components/AdminProductManagement/AdminProductManagement.jsx";
+import AdminLogin from "./pages/AdminAuthentication/AdminAuthentication.jsx";
+import AdminProductManagement from "./pages/AdminProductManagement/AdminProductManagement.jsx";
 
 
 function App() {
@@ -20,6 +20,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/products" element={<AdminProductManagement />} />
+          <Route path="/search" element={<SearchPage />} />
         </Routes>
       </div>
     </Router>
