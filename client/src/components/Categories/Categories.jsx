@@ -1,5 +1,16 @@
 import React, { useState } from 'react';
-import { ShoppingBag, Shirt, Home, Dumbbell, BookOpen, Gamepad2, Coffee, Sparkles, Car, Heart } from 'lucide-react';
+import {
+    Mountain,
+    Dumbbell,
+    Waves,
+    Snowflake,
+    Users,
+    Gamepad2,
+    HeartPulse,
+    Shirt,
+    Sparkles,
+    Baby
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 function ShopByCategory() {
@@ -8,54 +19,54 @@ function ShopByCategory() {
 
     const categories = [
         {
-            name: "Electronics",
-            icon: ShoppingBag,
-            image: "https://images.unsplash.com/photo-1498049794561-7780e7231661?w=400&h=300&fit=crop"
+            name: "Outdoor Sports",
+            icon: Mountain,
+            image: "https://images.unsplash.com/photo-1551632811-561732d1e306?w=400&h=300&fit=crop"
         },
         {
-            name: "Clothing",
-            icon: Shirt,
-            image: "https://images.unsplash.com/photo-1445205170230-053b83016050?w=400&h=300&fit=crop"
-        },
-        {
-            name: "Home & Garden",
-            icon: Home,
-            image: "https://images.unsplash.com/photo-1556911220-bff31c812dba?w=400&h=300&fit=crop"
-        },
-        {
-            name: "Sport",
+            name: "Indoor Sports & Fitness",
             icon: Dumbbell,
-            image: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=400&h=300&fit=crop"
+            image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop"
         },
         {
-            name: "Books",
-            icon: BookOpen,
-            image: "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=400&h=300&fit=crop"
+            name: "Water Sports",
+            icon: Waves,
+            image: "https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=400&h=300&fit=crop"
         },
         {
-            name: "Toys & Games",
-            icon: Gamepad2,
-            image: "https://images.unsplash.com/photo-1558060370-d644479cb6f7?w=400&h=300&fit=crop"
+            name: "Winter Sports",
+            icon: Snowflake,
+            image: "https://images.unsplash.com/photo-1511882150382-421056c89033?w=400&h=300&fit=crop"
         },
         {
-            name: "Food & Beverages",
-            icon: Coffee,
-            image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&h=300&fit=crop"
+            name: "Team Sports",
+            icon: Users,
+            image: "https://images.unsplash.com/photo-1575361204480-aadea25e6e68?w=400&h=300&fit=crop"
         },
         {
-            name: "Beauty & Personal Care",
+            name: "Racket Sports",
+            icon: Gamepad2, // Good alternative for sports
+            image: "https://images.unsplash.com/photo-1622279457486-62dcc4a431f8?w=400&h=300&fit=crop"
+        },
+        {
+            name: "Wellness & Recovery",
+            icon: HeartPulse,
+            image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&h=300&fit=crop"
+        },
+        {
+            name: "Men's Apparel & Footwear",
+            icon: Shirt,
+            image: "https://images.unsplash.com/photo-1520975916090-3105956dac38?w=400&h=300&fit=crop"
+        },
+        {
+            name: "Women's Apparel & Footwear",
             icon: Sparkles,
-            image: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=300&fit=crop"
+            image: "https://images.unsplash.com/photo-1591369822096-ffd140ec948f?w=400&h=300&fit=crop"
         },
         {
-            name: "Automotive",
-            icon: Car,
-            image: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=400&h=300&fit=crop"
-        },
-        {
-            name: "Health & Wellness",
-            icon: Heart,
-            image: "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=400&h=300&fit=crop"
+            name: "Kids' Sports & Apparel",
+            icon: Baby,
+            image: "https://images.unsplash.com/photo-1506506637031-5f5616792c26?w=400&h=300&fit=crop"
         }
     ];
 
@@ -65,15 +76,12 @@ function ShopByCategory() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-secondary via-primary to-[#2d2d00] pb-10 px-2.5 sm:px-5">
+        <div className="min-h-screen pb-10 px-2.5 sm:px-5">
             <div className="max-w-6xl mx-auto py-10 px-5 sm:px-10 md:py-15 lg:py-20">
                 <div className="text-center mb-8 sm:mb-10">
                     <h1 className="text-white text-3xl sm:text-4xl lg:text-5xl font-bold mb-2.5 drop-shadow-[0_0_20px_rgba(255,235,59,0.3)] tracking-tight">
                         Shop by Category
                     </h1>
-                    <p className="text-inactive-text text-base sm:text-lg">
-                        Browse our collection by category
-                    </p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">

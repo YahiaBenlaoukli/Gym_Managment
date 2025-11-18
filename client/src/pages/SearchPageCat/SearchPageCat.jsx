@@ -50,12 +50,12 @@ const SearchPage = () => {
                         className="bg-secondary p-4 rounded-xl shadow hover:shadow-lg hover:scale-105 transition transform duration-200"
                     >
                         <img
-                            src={p.image_path || "/placeholder.png"}
+                            src={`http://localhost:3000${p.image_path}`}
                             alt={p.name}
                             className="w-full h-48 object-cover rounded-lg mb-3"
                         />
 
-                        <h3 className="text-xl font-semibold">{p.name}</h3>
+                        <h3 className="text-text-color text-xl font-semibold">{p.name}</h3>
                         <p className="text-accent text-lg font-bold">
                             ${p.current_price}
                         </p>
@@ -66,7 +66,7 @@ const SearchPage = () => {
                             </p>
                         )}
 
-                        <p className="mt-2 text-sm">
+                        <p className="mt-2 text-text-color text-sm">
                             Stock:{" "}
                             <span
                                 className={

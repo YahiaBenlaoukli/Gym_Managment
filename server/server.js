@@ -2,12 +2,17 @@ const express = require('express');
 const env = require('dotenv')
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const path = require("path");
 
 
 env.config();
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+
 const authRoutes = require('./routes/auth.js');
 const productRoutes = require('./routes/product.js');
 const adminAuthRoutes = require('./routes/adminRoutes/adminAuth.js');

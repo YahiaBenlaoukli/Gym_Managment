@@ -13,16 +13,16 @@ const AdminProductManagement = () => {
     const navigate = useNavigate();
 
     const categories = [
-        "Electronics",
-        "Clothing",
-        "Home & Garden",
-        "Sport",
-        "Books",
-        "Toys & Games",
-        "Food & Beverages",
-        "Beauty & Personal Care",
-        "Automotive",
-        "Health & Wellness"
+        "Outdoor Sports",
+        "Indoor Sports & Fitness",
+        "Water Sports",
+        "Winter Sports",
+        "Team Sports",
+        "Racket Sports",
+        "Wellness & Recovery",
+        "Men's Apparel & Footwear",
+        "Women's Apparel & Footwear",
+        "Kids' Sports & Apparel"
     ];
 
     // Add Product State
@@ -31,7 +31,8 @@ const AdminProductManagement = () => {
         category: '',
         price: '',
         description: '',
-        stock: ''
+        stock: '',
+        images: []
     });
 
     // Selected Product for Edit/Delete
@@ -43,7 +44,7 @@ const AdminProductManagement = () => {
     // Dashboard Stats
     const [productsCount, setProductsCount] = useState(0);
     const [productsLowStock, setProductsLowStock] = useState(0);
-    const [lowStockProducts, setLowStockProducts] = useState([]); // <-- ADDED STATE
+    const [lowStockProducts, setLowStockProducts] = useState([]);
 
     // Update Modal State
     const [updateField, setUpdateField] = useState('');
@@ -117,17 +118,42 @@ const AdminProductManagement = () => {
     const handleAddProductChange = (e) => {
         setAddProductData({ ...addProductData, [e.target.name]: e.target.value });
     };
+    const handleImageChange = (e) => {
+        setAddProductData({
+            ...addProductData,
+            images: Array.from(e.target.files)
+        });
+    };
 
+    // Update the submit function to use FormData
     const handleAddProductSubmit = async () => {
         setLoading(true);
         setError(null);
         setMessage(null);
+
         try {
-            const response = await api.post('/admin/product/adminAddProduct', addProductData);
+            const formData = new FormData();
+            formData.append('name', addProductData.name);
+            formData.append('category', addProductData.category);
+            formData.append('price', addProductData.price);
+            formData.append('description', addProductData.description);
+            formData.append('stock', addProductData.stock);
+
+            // Append all images
+            addProductData.images.forEach((image) => {
+                formData.append('images', image);
+            });
+
+            const response = await api.post('/admin/product/adminAddProduct', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+
             setMessage(response.data.message);
-            setAddProductData({ name: '', category: '', price: '', description: '', stock: '' });
+            setAddProductData({ name: '', category: '', price: '', description: '', stock: '', images: [] });
             setTimeout(() => setMessage(null), 3000);
-            fetchDashboardStats(); // Refresh stats after adding
+            fetchDashboardStats();
         } catch (err) {
             setError(err.response?.data?.error || 'Error adding product');
         } finally {
@@ -431,6 +457,18 @@ const AdminProductManagement = () => {
                                     onChange={handleAddProductChange}
                                     className="w-full min-h-[120px] bg-input-bg border-2 border-transparent rounded-lg px-5 py-4 text-white text-sm outline-none transition-all duration-300 focus:border-accent focus:shadow-[0_0_15px_rgba(255,235,59,0.3)] placeholder:text-inactive-text resize-vertical"
                                 />
+                            </div>
+                            <div>
+                                <label className="block text-white text-sm font-semibold mb-2.5">Image</label>
+                                <input
+                                    type='file'
+                                    accept='image/*'  // Fixed typo
+                                    multiple
+                                    name='images'
+                                    onChange={handleImageChange}  // Use new handler
+                                    className="w-full h-14 bg-input-bg border-2 border-transparent rounded-lg px-5 text-white text-sm outline-none transition-all duration-300 focus:border-accent focus:shadow-[0_0_15px_rgba(255,235,59,0.3)]"
+                                />
+
                             </div>
                             <div>
                                 <label className="block text-white text-sm font-semibold mb-2.5">Stock</label>

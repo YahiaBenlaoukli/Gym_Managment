@@ -7,16 +7,16 @@ import api from "../../services/api.js";
 
 function Dashboard() {
     const categories = [
-        "Electronics",
-        "Clothing",
-        "Home & Garden",
-        "Sport",
-        "Books",
-        "Toys & Games",
-        "Food & Beverages",
-        "Beauty & Personal Care",
-        "Automotive",
-        "Health & Wellness"
+        "Outdoor Sports",
+        "Indoor Sports & Fitness",
+        "Water Sports",
+        "Winter Sports",
+        "Team Sports",
+        "Racket Sports",
+        "Wellness & Recovery",
+        "Men's Apparel & Footwear",
+        "Women's Apparel & Footwear",
+        "Kids' Sports & Apparel",
     ];
 
     const [selectedCategory, setSelectedCategory] = useState("");

@@ -4,7 +4,7 @@ const adminproductController = require('../../controllers/adminControllers/admin
 const productController = require('../../controllers/productController.js');
 const authenticateToken = require('../../middleware/adminAuthenticateToken.js')
 
-router.post("/adminAddProduct", authenticateToken, adminproductController.adminAddProduct);
+router.post("/adminAddProduct", authenticateToken, adminproductController.uploadProductImages, adminproductController.adminAddProduct);
 router.delete("/adminDeleteProduct", authenticateToken, adminproductController.adminDeleteProduct);
 router.put("/adminUpdateProduct", authenticateToken, adminproductController.adminUpdateProduct);
 router.put("/adminDiscountProduct", authenticateToken, adminproductController.adminDiscountProduct);

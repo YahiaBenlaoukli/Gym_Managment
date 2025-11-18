@@ -3,7 +3,7 @@ import heroImage from "./hero.webp" // Import the image
 
 export default function Hero() {
     return (
-        <section className="bg-gradient-to-br from-secondary via-primary to-[#2d2d00] text-white py-16 md:py-24 mt-20 max-w-7xl mx-auto border-2 border-accent mb-12 shadow-[0_8px_32px_rgba(0,0,0,0.4)] backdrop-blur-sm rounded-lg">
+        <section className="text-white py-16 md:py-24 max-w-7xl mx-auto border-b-2 border-accent mb-12 shadow-[0_8px_32px_rgba(0,0,0,0.4)] backdrop-blur-sm rounded-lg">
             <div className="max-w-7xl mx-auto px-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                     {/* Left Content */}

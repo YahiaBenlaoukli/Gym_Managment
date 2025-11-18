@@ -1,27 +1,110 @@
-const { get } = require('../../routes/product.js');
 const getConnection = require('../../services/db.js');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 
+// Create assets folder if it doesn't exist
+const assetsDir = path.join(process.cwd(), 'uploads/products');
+if (!fs.existsSync(assetsDir)) {
+    fs.mkdirSync(assetsDir, { recursive: true });
+}
+
+// Configure multer storage
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, assetsDir);
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, 'product-' + uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
+// File filter
+const fileFilter = (req, file, cb) => {
+    const allowedTypes = /jpeg|jpg|png|gif|webp/;
+    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = allowedTypes.test(file.mimetype);
+
+    if (extname && mimetype) {
+        cb(null, true);
+    } else {
+        cb(new Error('Only image files (jpeg, jpg, png, gif, webp) are allowed!'));
+    }
+};
+
+const upload = multer({
+    storage: storage,
+    fileFilter: fileFilter,
+    limits: { fileSize: 5 * 1024 * 1024 } // 5MB per file
+});
+
+// Export the upload middleware
+exports.uploadProductImages = upload.array('images', 5);
 
 exports.adminAddProduct = async (req, res) => {
     const { name, category, price, description, stock } = req.body;
+
     if (!name || !category || !price || !description || !stock) {
         console.error("Validation error: Missing fields.");
+
+        // Clean up uploaded files if validation fails
+        if (req.files && req.files.length > 0) {
+            req.files.forEach(file => {
+                fs.unlinkSync(file.path);
+            });
+        }
+
         return res.status(400).json({ error: "All fields are required." });
     }
+
     try {
         const connection = await getConnection();
         console.log("Connected to the database successfully.");
+
         const creation_date = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
 
-        const product = { name, category, price, description, stock, creation_date };
+        // Handle image path
+        let image_path;
+        if (req.files && req.files.length > 0) {
+            // Use the first uploaded image or store multiple paths as JSON
+            image_path = `/uploads/products/${req.files[0].filename}`;
 
-        await connection.promise().query("INSERT INTO products (name, category, description, current_price, image_path, stock, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)", [name, category, description, price, null, stock, creation_date]);
+            // If you want to store multiple images, use:
+            // const imagePaths = req.files.map(file => `/Assets/products/${file.filename}`);
+            // image_path = JSON.stringify(imagePaths);
+        } else {
+            // Default placeholder
+            image_path = "/uploads/Placeholder_view_vector.svg.png";
+        }
+
+        await connection.promise().query(
+            "INSERT INTO products (name, category, description, current_price, image_path, stock, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            [name, category, description, price, image_path, stock, creation_date]
+        );
+
         console.log("Product added successfully.");
-
         await connection.end();
-        return res.status(201).json({ message: "Product added successfully." });
+
+        return res.status(201).json({
+            message: "Product added successfully.",
+            image_path: image_path
+        });
+
     } catch (error) {
         console.error("Database error:", error);
+
+        // Clean up uploaded files if database insert fails
+        if (req.files && req.files.length > 0) {
+            req.files.forEach(file => {
+                try {
+                    fs.unlinkSync(file.path);
+                } catch (unlinkError) {
+                    console.error("Error deleting file:", unlinkError);
+                }
+            });
+        }
+
         return res.status(500).json({ error: "Internal server error." });
     }
 };
