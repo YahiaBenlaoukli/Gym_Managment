@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import Hero from "../../components/Hero/Hero.jsx";
 import Navbar from "../../components/Navbar/Navbar.jsx";
+import Footer from "../../components/Footer/Footer.jsx";
 import ShopByCategory from "../../components/Categories/Categories.jsx";
 import api from "../../services/api.js";
 
@@ -138,7 +139,7 @@ function Dashboard() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-secondary via-primary to-[#2d2d00] pb-10 px-2.5 sm:px-5">
+        <div className="min-h-screen bg-gradient-to-br from-secondary via-primary to-[#2d2d00]">
             <Navbar />
             <Hero />
             <ShopByCategory />S
@@ -341,6 +342,7 @@ function Dashboard() {
                     )}
                 </div>
             </div>
+            <Footer />
         </div>
     );
 }

@@ -2,6 +2,7 @@ import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar/Navbar.jsx";
 import api from "../../services/api.js";
+import { useNavigate } from "react-router-dom";
 
 const SearchPage = () => {
     const location = useLocation();
@@ -10,6 +11,7 @@ const SearchPage = () => {
 
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -25,6 +27,9 @@ const SearchPage = () => {
         fetchData();
     }, [category]);
 
+    const handleProductClick = (productId) => {
+        navigate(`/product?id=${encodeURIComponent(productId)}`);
+    };
     if (loading)
         return (
             <p className="text-center mt-10 text-text-color text-lg">
@@ -83,7 +88,8 @@ const SearchPage = () => {
                             {p.description?.slice(0, 60)}...
                         </p>
 
-                        <button className="w-full mt-4 bg-accent text-black py-2 rounded-lg font-semibold hover:bg-hover transition">
+                        <button className="w-full mt-4 bg-accent text-black py-2 rounded-lg font-semibold hover:bg-hover transition"
+                            onClick={() => handleProductClick(p.id)}>
                             View Details
                         </button>
                     </div>

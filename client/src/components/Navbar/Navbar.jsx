@@ -5,14 +5,37 @@ import { FaUserCircle, FaBars, FaTimes } from 'react-icons/fa';
 import api from "../../services/api";
 import { useNavigate } from 'react-router-dom';
 
-
-
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const dropdownRef = useRef(null);
   const [user, setUser] = useState("");
   const navigate = useNavigate();
+
+  // Handle scroll behavior
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Show navbar when scrolling up, hide when scrolling down
+      if (currentScrollY < lastScrollY || currentScrollY < 10) {
+        setIsVisible(true);
+      } else if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setIsVisible(false);
+        setIsUserDropdownOpen(false); // Close dropdown when hiding navbar
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [lastScrollY]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -21,11 +44,12 @@ const Navbar = () => {
         setIsUserDropdownOpen(false);
       }
     };
+
     const fetchProfile = async () => {
       try {
         const res = await api.get("auth/profile");
-        console.log(res.data); // check backend response
-        setUser(res.data.user.username); // adjust depending on backend response
+        console.log(res.data);
+        setUser(res.data.user.username);
       } catch (err) {
         console.error("Error fetching profile:", err);
       }
@@ -36,11 +60,7 @@ const Navbar = () => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-
-
   }, []);
-
-
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -62,7 +82,8 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="w-full flex justify-between items-center py-5 px-5 sm:px-6 bg-gradient-to-br from-primary via-secondary to-[#1a1a0a] text-white shadow-[0_8px_32px_rgba(0,0,0,0.4)] backdrop-blur-sm border-b-2 border-accent rounded-lg sticky top-0 z-50 transition-all duration-300 hover:shadow-[0_12px_40px_rgba(255,235,59,0.1)]">
+    <nav className={`w-full flex justify-between items-center py-5 px-5 sm:px-6 bg-gradient-to-br from-primary via-secondary to-[#1a1a0a] text-white shadow-[0_8px_32px_rgba(0,0,0,0.4)] backdrop-blur-sm border-b-2 border-accent rounded-lg sticky top-0 z-50 transition-all duration-300 hover:shadow-[0_12px_40px_rgba(255,235,59,0.1)] ${isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+      }`}>
       <div className="flex items-center gap-2">
         <FaDumbbell size={40} className="text-accent" title="Dumbbell (GameIcons)" />
         <Link to="/" className="text-white no-underline text-sm sm:text-base font-bold tracking-wide transition-colors duration-300 hover:text-accent">
@@ -128,7 +149,6 @@ const Navbar = () => {
 
       <div className="flex items-center gap-5 relative md:gap-4">
         <span className="text-inactive-text font-medium text-base hidden sm:inline md:hidden">Welcome, {user}</span>
-
 
         {/* User dropdown */}
         <div className="relative" ref={dropdownRef}>

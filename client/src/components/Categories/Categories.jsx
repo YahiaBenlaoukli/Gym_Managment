@@ -36,37 +36,37 @@ function ShopByCategory() {
         {
             name: "Winter Sports",
             icon: Snowflake,
-            image: "https://images.unsplash.com/photo-1511882150382-421056c89033?w=400&h=300&fit=crop"
+            image: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?h=300&w=400&fit=crop"
         },
         {
             name: "Team Sports",
             icon: Users,
-            image: "https://images.unsplash.com/photo-1575361204480-aadea25e6e68?w=400&h=300&fit=crop"
+            image: "https://plus.unsplash.com/premium_photo-1661963855258-218cbf2dadaa?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?fit=crop"
         },
         {
             name: "Racket Sports",
-            icon: Gamepad2, // Good alternative for sports
-            image: "https://images.unsplash.com/photo-1622279457486-62dcc4a431f8?w=400&h=300&fit=crop"
+            icon: Gamepad2,
+            image: "https://images.unsplash.com/photo-1708312604109-16c0be9326cd?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?w=400&fit=crop"
         },
         {
             name: "Wellness & Recovery",
             icon: HeartPulse,
-            image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&h=300&fit=crop"
+            image: "https://images.unsplash.com/photo-1595348020949-87cdfbb44174?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?w=400&fit=crop"
         },
         {
             name: "Men's Apparel & Footwear",
             icon: Shirt,
-            image: "https://images.unsplash.com/photo-1520975916090-3105956dac38?w=400&h=300&fit=crop"
+            image: "https://images.unsplash.com/photo-1679768763201-e07480531b49?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?w=400&fit=crop"
         },
         {
             name: "Women's Apparel & Footwear",
             icon: Sparkles,
-            image: "https://images.unsplash.com/photo-1591369822096-ffd140ec948f?w=400&h=300&fit=crop"
+            image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=1220&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?w=400&&fit=crop"
         },
         {
             name: "Kids' Sports & Apparel",
             icon: Baby,
-            image: "https://images.unsplash.com/photo-1506506637031-5f5616792c26?w=400&h=300&fit=crop"
+            image: "https://images.unsplash.com/photo-1544333323-ec9ed3218dd1?q=80&w=1132&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?w=400&fit=crop"
         }
     ];
 
@@ -80,7 +80,7 @@ function ShopByCategory() {
             <div className="max-w-6xl mx-auto py-10 px-5 sm:px-10 md:py-15 lg:py-20">
                 <div className="text-center mb-8 sm:mb-10">
                     <h1 className="text-white text-3xl sm:text-4xl lg:text-5xl font-bold mb-2.5 drop-shadow-[0_0_20px_rgba(255,235,59,0.3)] tracking-tight">
-                        Shop by Category
+                        Might Intrest You
                     </h1>
                 </div>
 
