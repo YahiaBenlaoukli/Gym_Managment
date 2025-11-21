@@ -71,7 +71,6 @@ function ShopByCategory() {
     ];
 
     const handleCategoryClick = (categoryName) => {
-        // Navigate to search page with category as a query parameter
         navigate(`/search?category=${encodeURIComponent(categoryName)}`);
     };
 
@@ -98,17 +97,14 @@ function ShopByCategory() {
                                     animation: `fadeInUp 0.6s ease-out ${index * 0.1}s both`
                                 }}
                             >
-                                {/* Background Image */}
                                 <div className="relative h-48 overflow-hidden">
                                     <img
                                         src={category.image}
                                         alt={category.name}
                                         className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-110"
                                     />
-                                    {/* Overlay */}
                                     <div className="absolute inset-0 bg-gradient-to-br from-[rgba(255,235,59,0.4)] to-[rgba(26,26,26,0.8)] group-hover:from-[rgba(255,235,59,0.5)] group-hover:to-[rgba(26,26,26,0.7)] transition-all duration-300"></div>
 
-                                    {/* Content */}
                                     <div className="absolute inset-0 flex flex-col items-center justify-center p-5">
                                         <div className={`transform transition-all duration-500 ${hoveredCategory === index ? 'scale-110 rotate-12' : 'scale-100 rotate-0'}`}>
                                             <Icon className="w-14 h-14 text-accent mb-3 drop-shadow-[0_0_10px_rgba(255,235,59,0.6)]" strokeWidth={2} />
@@ -128,7 +124,6 @@ function ShopByCategory() {
                                         </div>
                                     </div>
 
-                                    {/* Shimmer Effect */}
                                     <div className={`absolute inset-0 transform transition-transform duration-1000 ${hoveredCategory === index ? 'translate-x-full' : '-translate-x-full'}`}>
                                         <div className="h-full w-1/2 bg-gradient-to-r from-transparent via-accent/30 to-transparent skew-x-12"></div>
                                     </div>

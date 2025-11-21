@@ -32,6 +32,7 @@ function Authentication() {
             const res = await api.post('auth/register', signupData);
             console.log(res);
             alert("Signup successful");
+            navigate(`/verify_otp?user_id=${encodeURIComponent(res.data.userId)}&user_username=${encodeURIComponent(signupData.username)}`);
         } catch (err) {
             alert(err.response?.data?.message || "Signup failed ❌");
         }
@@ -112,8 +113,8 @@ function Authentication() {
                 <div className="mt-8 flex flex-col sm:flex-row gap-4 w-full">
                     <div
                         className={`flex justify-center items-center w-full h-12 sm:h-14 rounded-full text-sm sm:text-base font-semibold cursor-pointer transition-all duration-300 border-none uppercase tracking-wide relative overflow-hidden ${action === "Login"
-                                ? "bg-input-bg text-white border-2 border-inactive-text hover:bg-secondary hover:border-accent hover:text-accent hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(0,0,0,0.3)]"
-                                : "bg-accent text-secondary hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(255,235,59,0.4)] active:translate-y-0 active:shadow-[0_5px_15px_rgba(255,235,59,0.3)]"
+                            ? "bg-input-bg text-white border-2 border-inactive-text hover:bg-secondary hover:border-accent hover:text-accent hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(0,0,0,0.3)]"
+                            : "bg-accent text-secondary hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(255,235,59,0.4)] active:translate-y-0 active:shadow-[0_5px_15px_rgba(255,235,59,0.3)]"
                             }`}
                         onClick={() => {
                             if (action === "Login") {
@@ -127,8 +128,8 @@ function Authentication() {
                     </div>
                     <div
                         className={`flex justify-center items-center w-full h-12 sm:h-14 rounded-full text-sm sm:text-base font-semibold cursor-pointer transition-all duration-300 border-none uppercase tracking-wide relative overflow-hidden ${action === "Sign Up"
-                                ? "bg-input-bg text-white border-2 border-inactive-text hover:bg-secondary hover:border-accent hover:text-accent hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(0,0,0,0.3)]"
-                                : "bg-accent text-secondary hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(255,235,59,0.4)] active:translate-y-0 active:shadow-[0_5px_15px_rgba(255,235,59,0.3)]"
+                            ? "bg-input-bg text-white border-2 border-inactive-text hover:bg-secondary hover:border-accent hover:text-accent hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(0,0,0,0.3)]"
+                            : "bg-accent text-secondary hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(255,235,59,0.4)] active:translate-y-0 active:shadow-[0_5px_15px_rgba(255,235,59,0.3)]"
                             }`}
                         onClick={() => {
                             if (action === "Sign Up") {

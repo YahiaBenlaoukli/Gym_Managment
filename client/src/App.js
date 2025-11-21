@@ -6,6 +6,7 @@ import Authentication from "./pages/Authentication/Authentication.jsx";
 import Dashboard from "./pages/Dashboard/Dashboard.jsx";
 import SearchPage from "./pages/SearchPageCat/SearchPageCat.jsx";
 import ProductDetails from "./pages/SeachPageId/SearchPageId.jsx";
+import OTPVerification from "./pages/OTPVerfivcation/OTPVerfication.jsx";
 
 //admin components
 import AdminLogin from "./pages/AdminAuthentication/AdminAuthentication.jsx";
@@ -18,6 +19,7 @@ function App() {
       <div className="App">
         <Routes>
           <Route path="/" element={<Authentication />} />
+          <Route path="/verify_otp" element={<OTPVerification />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/products" element={<AdminProductManagement />} />

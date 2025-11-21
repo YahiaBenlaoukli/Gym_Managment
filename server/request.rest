@@ -1,8 +1,8 @@
-POST http://localhost:3000/api/auth/register
-content-type: application/json
+
+POST http://localhost:3000/api/auth/verify_otp
+Content-Type: application/json
 
 {
-  "username": "newuser",
-  "email": "yahia@gmail.com",
-  "password": "securepassword"
+    "user_id": 11,
+    "otp": "2421"
 }
