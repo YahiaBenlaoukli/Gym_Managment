@@ -13,4 +13,4 @@ router.get("/showAllProducts", authenticateToken, productController.showallprodu
 router.post("/showProductDetails", authenticateToken, productController.showproductdetails);
 router.post("/searchProductsByName", authenticateToken, productController.searchproductsbyname);
 
-module.exports = router;    
+module.exports = router;

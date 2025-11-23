@@ -18,9 +18,9 @@ function App() {
     <Router>
       <div className="App">
         <Routes>
-          <Route path="/" element={<Authentication />} />
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/auth" element={<Authentication />} />
           <Route path="/verify_otp" element={<OTPVerification />} />
-          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/products" element={<AdminProductManagement />} />
           <Route path="/search" element={<SearchPage />} />

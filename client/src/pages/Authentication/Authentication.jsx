@@ -44,7 +44,7 @@ function Authentication() {
             const res = await api.post('auth/login', loginData);
             console.log(res);
             alert("Login successful");
-            navigate('/dashboard');
+            navigate('/');
         } catch (err) {
             alert(err.response?.data?.message || "Login failed ❌");
         }

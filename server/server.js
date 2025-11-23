@@ -17,6 +17,7 @@ const authRoutes = require('./routes/auth.js');
 const productRoutes = require('./routes/product.js');
 const adminAuthRoutes = require('./routes/adminRoutes/adminAuth.js');
 const adminProductRoutes = require('./routes/adminRoutes/adminProduct.js');
+const cartRoutes = require('./routes/cart.js');
 app.use(cors({
     origin: 'http://localhost:3001', // The address of your React app
     credentials: true // Required for sending/receiving cookies
@@ -26,6 +27,7 @@ app.use(cors({
 
 app.use('/api/auth', authRoutes);
 app.use('/api/product', productRoutes);
+app.use('/api/cart', cartRoutes);
 app.use('/api/admin/auth', adminAuthRoutes);
 app.use('/api/admin/product', adminProductRoutes);
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     Mountain,
     Dumbbell,
@@ -16,6 +16,8 @@ import { useNavigate } from 'react-router-dom';
 function ShopByCategory() {
     const navigate = useNavigate();
     const [hoveredCategory, setHoveredCategory] = useState(null);
+    const [visibleCards, setVisibleCards] = useState([]);
+    const cardRefs = useRef([]);
 
     const categories = [
         {
@@ -70,32 +72,73 @@ function ShopByCategory() {
         }
     ];
 
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        const index = Number(entry.target.dataset.index);
+                        setVisibleCards((prev) => {
+                            if (!prev.includes(index)) {
+                                setTimeout(() => {
+                                    setVisibleCards((p) => [...p, index]);
+                                }, index * 150); // 150ms delay per card
+
+                                return prev; // prevent immediate show
+                            }
+                            return prev;
+                        });
+                    }
+                });
+            },
+            {
+                threshold: 0.3,
+                rootMargin: '0px 0px -70px 0px'
+
+            }
+        );
+
+        cardRefs.current.forEach((ref) => {
+            if (ref) observer.observe(ref);
+        });
+
+        return () => {
+            cardRefs.current.forEach((ref) => {
+                if (ref) observer.unobserve(ref);
+            });
+        };
+    }, []);
+
     const handleCategoryClick = (categoryName) => {
         navigate(`/search?category=${encodeURIComponent(categoryName)}`);
     };
 
     return (
         <div className="min-h-screen pb-10 px-2.5 sm:px-5">
-            <div className="max-w-6xl mx-auto py-10 px-5 sm:px-10 md:py-15 lg:py-20">
+            <div className="max-w-[1400px] mx-auto py-10 px-2.5 sm:px-10 md:py-15 lg:py-20">
                 <div className="text-center mb-8 sm:mb-10">
                     <h1 className="text-white text-3xl sm:text-4xl lg:text-5xl font-bold mb-2.5 drop-shadow-[0_0_20px_rgba(255,235,59,0.3)] tracking-tight">
-                        Might Intrest You
+                        Might Interest You
                     </h1>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
                     {categories.map((category, index) => {
                         const Icon = category.icon;
+                        const isVisible = visibleCards.includes(index);
+
                         return (
                             <div
                                 key={category.name}
-                                className="relative group cursor-pointer bg-[rgba(26,26,26,0.95)] backdrop-blur-sm border-2 border-accent/20 rounded-2xl overflow-hidden transition-all duration-300 hover:border-accent hover:shadow-[0_10px_25px_rgba(255,235,59,0.3)] hover:-translate-y-1"
+                                ref={(el) => (cardRefs.current[index] = el)}
+                                data-index={index}
+                                className={`relative group cursor-pointer bg-[rgba(26,26,26,0.95)] backdrop-blur-sm border-2 border-accent/20 rounded-2xl overflow-hidden transition-all duration-500 hover:border-accent hover:shadow-[0_10px_25px_rgba(255,235,59,0.3)] hover:-translate-y-1 ${isVisible
+                                    ? 'opacity-100 translate-y-0'
+                                    : 'opacity-0 translate-y-20'
+                                    }`}
                                 onMouseEnter={() => setHoveredCategory(index)}
                                 onMouseLeave={() => setHoveredCategory(null)}
                                 onClick={() => handleCategoryClick(category.name)}
-                                style={{
-                                    animation: `fadeInUp 0.6s ease-out ${index * 0.1}s both`
-                                }}
                             >
                                 <div className="relative h-48 overflow-hidden">
                                     <img
@@ -133,19 +176,6 @@ function ShopByCategory() {
                     })}
                 </div>
             </div>
-
-            <style>{`
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
         </div>
     );
 }

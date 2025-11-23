@@ -11,7 +11,9 @@ const Navbar = () => {
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const dropdownRef = useRef(null);
-  const [user, setUser] = useState("");
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const isLoggedIn = Boolean(user);
   const navigate = useNavigate();
 
   // Handle scroll behavior
@@ -45,21 +47,32 @@ const Navbar = () => {
       }
     };
 
-    const fetchProfile = async () => {
-      try {
-        const res = await api.get("auth/profile");
-        console.log(res.data);
-        setUser(res.data.user.username);
-      } catch (err) {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const fetchProfile = async () => {
+    try {
+      setLoading(true);
+      const res = await api.get("auth/profile");
+      console.log("Profile fetched:", res.data);
+      setUser(res.data.user.username);
+    } catch (err) {
+      console.log("User not authenticated:", err.response?.status);
+      // Only log error if it's not a 401 (unauthorized) - which is expected when not logged in
+      if (err.response?.status !== 401) {
         console.error("Error fetching profile:", err);
       }
-    };
-    fetchProfile();
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+  useEffect(() => {
+    fetchProfile();
   }, []);
 
   const toggleMenu = () => {
@@ -70,15 +83,21 @@ const Navbar = () => {
     setIsUserDropdownOpen(!isUserDropdownOpen);
   };
 
-  const handleLogout = () => {
-    console.log('Logout clicked');
-    api.post('auth/logout').then(res => {
-      console.log(res);
-    }).catch(err => {
-      console.log(err);
-    });
-    navigate('/');
-    setIsUserDropdownOpen(false);
+  const handleLogout = async () => {
+    try {
+      console.log('Logout clicked');
+      await api.post('auth/logout');
+      setUser(null);
+      localStorage.removeItem('token'); // Clear token if using localStorage
+      navigate('/');
+      setIsUserDropdownOpen(false);
+    } catch (err) {
+      console.error("Logout error:", err);
+      // Even if logout fails on backend, clear frontend state
+      setUser(null);
+      localStorage.removeItem('token');
+      navigate('/');
+    }
   };
 
   return (
@@ -148,30 +167,44 @@ const Navbar = () => {
       </ul>
 
       <div className="flex items-center gap-5 relative md:gap-4">
-        <span className="text-inactive-text font-medium text-base hidden sm:inline md:hidden">Welcome, {user}</span>
+        {loading ? (
+          // Optional: Show a loading indicator while checking auth status
+          <div className="w-10 h-10 rounded-full bg-[rgba(255,235,59,0.1)] animate-pulse"></div>
+        ) : isLoggedIn ? (
+          <>
+            <span className="text-inactive-text font-medium text-base hidden sm:inline md:hidden">Welcome, {user}</span>
 
-        {/* User dropdown */}
-        <div className="relative" ref={dropdownRef}>
-          <FaUserCircle
-            className="w-12 h-12 cursor-pointer ml-2.5 text-accent transition-all duration-300 rounded-full p-1.5 bg-[rgba(255,235,59,0.1)] border-2 border-transparent hover:text-hover hover:bg-[rgba(255,235,59,0.2)] hover:border-accent hover:scale-110 hover:shadow-[0_0_20px_rgba(255,235,59,0.4)] md:w-10 md:h-10 md:ml-0"
-            onClick={toggleUserDropdown}
-          />
-          {isUserDropdownOpen && (
-            <div className="absolute top-[calc(100%+10px)] right-0 bg-primary border-2 border-accent rounded-2xl shadow-[0_15px_35px_rgba(0,0,0,0.5)] py-2.5 min-w-[200px] z-[1001] opacity-0 translate-y-[-10px] animate-[dropdownFadeIn_0.3s_ease_forwards] backdrop-blur-sm md:right-[-20px] md:min-w-[180px]">
-              <div className="flex items-center gap-3 py-4 px-5 text-white cursor-pointer transition-all duration-300 border-none bg-none w-full text-left text-base font-medium hover:bg-[rgba(255,235,59,0.1)] hover:text-accent">
-                <FaUserCircle className="w-5 h-5 text-accent" />
-                <span>Welcome, {user}</span>
-              </div>
-              <div className="h-px bg-[rgba(255,235,59,0.3)] my-2"></div>
-              <button
-                onClick={handleLogout}
-                className="flex items-center gap-3 py-4 px-5 text-[#ff4757] cursor-pointer transition-all duration-300 border-none bg-none w-full text-left text-base font-medium border-t border-[rgba(255,235,59,0.2)] mt-1.25 hover:bg-[rgba(255,71,87,0.1)] hover:text-[#ff3742]"
-              >
-                Logout
-              </button>
+            {/* User dropdown */}
+            <div className="relative" ref={dropdownRef}>
+              <FaUserCircle
+                className="w-12 h-12 cursor-pointer ml-2.5 text-accent transition-all duration-300 rounded-full p-1.5 bg-[rgba(255,235,59,0.1)] border-2 border-transparent hover:text-hover hover:bg-[rgba(255,235,59,0.2)] hover:border-accent hover:scale-110 hover:shadow-[0_0_20px_rgba(255,235,59,0.4)] md:w-10 md:h-10 md:ml-0"
+                onClick={toggleUserDropdown}
+              />
+              {isUserDropdownOpen && (
+                <div className="absolute top-[calc(100%+10px)] right-0 bg-primary border-2 border-accent rounded-2xl shadow-[0_15px_35px_rgba(0,0,0,0.5)] py-2.5 min-w-[200px] z-[1001] opacity-0 translate-y-[-10px] animate-[dropdownFadeIn_0.3s_ease_forwards] backdrop-blur-sm md:right-[-20px] md:min-w-[180px]">
+                  <div className="flex items-center gap-3 py-4 px-5 text-white cursor-pointer transition-all duration-300 border-none bg-none w-full text-left text-base font-medium hover:bg-[rgba(255,235,59,0.1)] hover:text-accent">
+                    <FaUserCircle className="w-5 h-5 text-accent" />
+                    <span>Welcome, {user}</span>
+                  </div>
+                  <div className="h-px bg-[rgba(255,235,59,0.3)] my-2"></div>
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-3 py-4 px-5 text-[#ff4757] cursor-pointer transition-all duration-300 border-none bg-none w-full text-left text-base font-medium border-t border-[rgba(255,235,59,0.2)] mt-1.25 hover:bg-[rgba(255,71,87,0.1)] hover:text-[#ff3742]"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
             </div>
-          )}
-        </div>
+          </>
+        ) : (
+          <Link
+            to="/auth"
+            className="text-white no-underline font-semibold py-2.5 px-6 rounded-full transition-all duration-300 bg-accent border-2 border-accent hover:bg-transparent hover:text-accent hover:border-accent hover:shadow-[0_8px_25px_rgba(255,235,59,0.3)] hover:-translate-y-0.5 active:translate-y-0"
+          >
+            Login
+          </Link>
+        )}
       </div>
     </nav>
   );
