@@ -78,8 +78,8 @@ exports.removeFromCart = async (req, res) => {
 exports.confirmedOrder = async (req, res) => {
     const { cartItemId, userLocation, userMobile } = req.body;
     const user_id = req.user.id;
-
-    if (!userLocation || !userMobile) {
+    const user_email = req.user.email;
+    if (!cartItemId || !userLocation || !userMobile) {
         return res.status(400).json({ error: "All fields are required." });
     }
 
@@ -121,7 +121,7 @@ exports.confirmedOrder = async (req, res) => {
 
         await transporter.sendMail({
             from: process.env.AUTH_MAIL,
-            to: userEmail,
+            to: user_email,
             subject: "Order Confirmation - Your Order has been placed",
             html: `
                 <p>Dear Customer,</p>
