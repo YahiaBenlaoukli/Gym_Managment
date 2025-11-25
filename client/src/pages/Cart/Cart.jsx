@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import api from '../../services/api';
 import Navbar from '../../components/Navbar/Navbar';
 import Footer from '../../components/Footer/Footer';
+import { Link } from 'react-router-dom';
 
 function Cart() {
     const [cartItems, setCartItems] = useState([]);
@@ -10,10 +11,23 @@ function Cart() {
     const [checkoutStep, setCheckoutStep] = useState('review');
     const [selectedItem, setSelectedItem] = useState(null);
     const [userMobile, setUserMobile] = useState('');
-    const [userLocation, setUserLocation] = useState('');
+    const [userWilaya, setUserWilaya] = useState('');
+    const [userCity, setUserCity] = useState('');
+    const [userAddress, setUserAddress] = useState('');
     const [checkoutError, setCheckoutError] = useState(null);
     const [checkoutMessage, setCheckoutMessage] = useState(null);
     const [actionLoading, setActionLoading] = useState(false);
+
+    const wilayas = [
+        'Adrar', 'Chlef', 'Laghouat', 'Oum El Bouaghi', 'Batna', 'Béjaïa', 'Biskra', 'Béchar',
+        'Blida', 'Bouira', 'Tamanrasset', 'Tébessa', 'Tlemcen', 'Tiaret', 'Tizi Ouzou', 'Algiers',
+        'Djelfa', 'Jijel', 'Sétif', 'Saïda', 'Skikda', 'Sidi Bel Abbès', 'Annaba', 'Guelma',
+        'Constantine', 'Médéa', 'Mostaganem', 'M\'Sila', 'Mascara', 'Ouargla', 'Oran', 'El Bayadh',
+        'Illizi', 'Bordj Bou Arréridj', 'Boumerdès', 'El Tarf', 'Tindouf', 'Tissemsilt', 'El Oued',
+        'Khenchela', 'Souk Ahras', 'Tipaza', 'Mila', 'Aïn Defla', 'Naâma', 'Aïn Témouchent',
+        'Ghardaïa', 'Relizane', 'Timimoun', 'Bordj Badji Mokhtar', 'Ouled Djellal', 'Béni Abbès',
+        'In Salah', 'In Guezzam', 'Touggourt', 'Djanet', 'El M\'Ghair', 'El Meniaa'
+    ];
 
     const getCartItems = async () => {
         setLoading(true);
@@ -41,13 +55,15 @@ function Cart() {
         setCheckoutStep('review');
         setSelectedItem(null);
         setUserMobile('');
-        setUserLocation('');
+        setUserWilaya('');
+        setUserCity('');
+        setUserAddress('');
         setCheckoutError(null);
     };
 
     const removeFromCart = async (cartItemId) => {
         try {
-            await api.post("cart/removeFromCart", { cartItemId });
+            await api.delete("cart/removeFromCart", { data: { cartItemId } });
             getCartItems();
         } catch (err) {
             console.error("Error removing from cart:", err);
@@ -57,7 +73,7 @@ function Cart() {
     const handleQuantityChange = async (cartItemId, newQuantity) => {
         if (newQuantity < 1) return;
         try {
-            await api.post("cart/updateCartItem", { cartItemId, newQuantity });
+            await api.put("cart/updateCartItem", { cartItemId, newQuantity });
             getCartItems();
         } catch (err) {
             console.error("Error updating quantity:", err);
@@ -70,7 +86,9 @@ function Cart() {
         setCheckoutError(null);
         setCheckoutMessage(null);
         setUserMobile('');
-        setUserLocation('');
+        setUserWilaya('');
+        setUserCity('');
+        setUserAddress('');
     };
 
     const confirmOrder = async () => {
@@ -78,18 +96,21 @@ function Cart() {
             setCheckoutError("Select an item to confirm.");
             return;
         }
-        if (!userMobile.trim() || !userLocation.trim()) {
-            setCheckoutError("Mobile number and location are required.");
+        if (!userMobile.trim() || !userWilaya.trim() || !userCity.trim() || !userAddress.trim()) {
+            setCheckoutError("Mobile number, wilaya, city, and address are required.");
             return;
         }
         try {
             setActionLoading(true);
+            // Combine location fields into a single string for backend
+            const userLocation = `${userWilaya}, ${userCity}, ${userAddress}`;
             await api.post("cart/confirmOrder", {
                 cartItemId: selectedItem.cartItemId,
                 userLocation,
                 userMobile
             });
             setCheckoutMessage("Order confirmed successfully!");
+            alert("Order confirmed successfully!");
             resetCheckoutFlow();
             getCartItems();
         } catch (err) {
@@ -132,9 +153,16 @@ function Cart() {
 
         if (!cartItems.length) {
             return (
-                <p className="text-inactive-text text-center text-lg py-10">
-                    Your cart is empty.
-                </p>
+                <div className="flex flex-col items-center justify-center">
+                    <p className="text-inactive-text text-center text-lg py-10">
+                        Your cart is empty.
+                    </p>
+                    <Link to="/" className="text-accent text-base font-semibold py-4 text-center">
+                        <button className="rounded-full border border-accent/100 px-4 py-2 text-sm font-semibold uppercase tracking-[0.2em] text-accent transition hover:bg-accent hover:text-secondary">
+                            Continue Shopping
+                        </button>
+                    </Link>
+                </div>
             );
         }
 
@@ -255,13 +283,42 @@ function Cart() {
                                     </div>
                                     <div>
                                         <label className="text-xs uppercase tracking-[0.2em] text-inactive-text">
-                                            Location / Address
+                                            Wilaya (Province)
+                                        </label>
+                                        <select
+                                            value={userWilaya}
+                                            onChange={e => setUserWilaya(e.target.value)}
+                                            className="mt-2 w-full rounded-xl border border-accent/30 bg-transparent px-4 py-3 text-white outline-none focus:border-accent"
+                                        >
+                                            <option value="">Select a wilaya</option>
+                                            {wilayas.map(wilaya => (
+                                                <option key={wilaya} value={wilaya} className="bg-primary text-white">
+                                                    {wilaya}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="text-xs uppercase tracking-[0.2em] text-inactive-text">
+                                            City
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={userCity}
+                                            onChange={e => setUserCity(e.target.value)}
+                                            className="mt-2 w-full rounded-xl border border-accent/30 bg-transparent px-4 py-3 text-white outline-none focus:border-accent"
+                                            placeholder="Enter your city"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="text-xs uppercase tracking-[0.2em] text-inactive-text">
+                                            Address
                                         </label>
                                         <textarea
-                                            value={userLocation}
-                                            onChange={e => setUserLocation(e.target.value)}
+                                            value={userAddress}
+                                            onChange={e => setUserAddress(e.target.value)}
                                             className="mt-2 w-full rounded-xl border border-accent/30 bg-transparent px-4 py-3 text-white outline-none focus:border-accent"
-                                            placeholder="Enter delivery location"
+                                            placeholder="Enter your detailed address"
                                             rows={3}
                                         />
                                     </div>
