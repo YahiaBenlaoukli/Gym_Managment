@@ -48,6 +48,7 @@ const Navbar = () => {
     };
 
     document.addEventListener("mousedown", handleClickOutside);
+    fetchProfile();
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -58,22 +59,19 @@ const Navbar = () => {
       setLoading(true);
       const res = await api.get("auth/profile");
       console.log("Profile fetched:", res.data);
-      setUser(res.data.user.username);
+      setUser(res.data.user);
     } catch (err) {
       console.log("User not authenticated:", err.response?.status);
-      // Only log error if it's not a 401 (unauthorized) - which is expected when not logged in
       if (err.response?.status !== 401) {
         console.error("Error fetching profile:", err);
       }
       setUser(null);
+
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchProfile();
-  }, []);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -139,11 +137,11 @@ const Navbar = () => {
         </li>
         <li className="relative inline-block m-0 text-lg cursor-pointer w-full md:w-auto text-center md:text-left">
           <Link
-            to="/Courses"
+            to="/cart"
             onClick={() => setIsMenuOpen(false)}
             className="text-white no-underline font-semibold py-3 px-5 md:py-3 md:px-5 rounded-full md:rounded-full transition-all duration-300 relative bg-transparent border-2 border-transparent hover:text-accent hover:bg-[rgba(255,235,59,0.1)] hover:border-accent hover:-translate-y-0.5 hover:shadow-[0_8px_25px_rgba(255,235,59,0.3)] active:translate-y-0 block w-full md:w-auto py-4 md:py-3 rounded-xl md:rounded-full"
           >
-            Courses
+            Cart
           </Link>
         </li>
         <li className="relative inline-block m-0 text-lg cursor-pointer w-full md:w-auto text-center md:text-left">
@@ -172,7 +170,9 @@ const Navbar = () => {
           <div className="w-10 h-10 rounded-full bg-[rgba(255,235,59,0.1)] animate-pulse"></div>
         ) : isLoggedIn ? (
           <>
-            <span className="text-inactive-text font-medium text-base hidden sm:inline md:hidden">Welcome, {user}</span>
+            <span className="text-inactive-text font-medium text-base hidden sm:inline md:hidden">
+              Welcome, {user?.username}
+            </span>
 
             {/* User dropdown */}
             <div className="relative" ref={dropdownRef}>
@@ -184,7 +184,7 @@ const Navbar = () => {
                 <div className="absolute top-[calc(100%+10px)] right-0 bg-primary border-2 border-accent rounded-2xl shadow-[0_15px_35px_rgba(0,0,0,0.5)] py-2.5 min-w-[200px] z-[1001] opacity-0 translate-y-[-10px] animate-[dropdownFadeIn_0.3s_ease_forwards] backdrop-blur-sm md:right-[-20px] md:min-w-[180px]">
                   <div className="flex items-center gap-3 py-4 px-5 text-white cursor-pointer transition-all duration-300 border-none bg-none w-full text-left text-base font-medium hover:bg-[rgba(255,235,59,0.1)] hover:text-accent">
                     <FaUserCircle className="w-5 h-5 text-accent" />
-                    <span>Welcome, {user}</span>
+                    <span>Welcome, {user?.username}</span>
                   </div>
                   <div className="h-px bg-[rgba(255,235,59,0.3)] my-2"></div>
                   <button

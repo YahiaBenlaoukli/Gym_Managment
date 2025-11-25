@@ -14,6 +14,27 @@ const SearchPageId = () => {
     const [loading, setLoading] = useState(true);
     const [selectedImage, setSelectedImage] = useState(0);
     const [quantity, setQuantity] = useState(1);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [authChecking, setAuthChecking] = useState(true);
+    const [user, setUser] = useState(null);
+
+    // Check authentication status
+    useEffect(() => {
+        const checkAuth = async () => {
+            try {
+                const res = await api.get("auth/profile");
+                setUser(res.data.user);
+                console.log("User is authenticated:", res.data.user);
+                setIsAuthenticated(true);
+            } catch (err) {
+                setIsAuthenticated(false);
+            } finally {
+                setAuthChecking(false);
+            }
+        };
+
+        checkAuth();
+    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -45,7 +66,23 @@ const SearchPageId = () => {
         });
     };
 
-    if (loading) {
+    const handleCartAdd = async (productId, qty) => {
+        // Check if user is authenticated
+        if (!isAuthenticated) {
+            // Redirect to login page
+            navigate('/auth');
+            return;
+        }
+        try {
+            await api.post("cart/addToCart", { user_id: user.id, product_id: productId, quantity: qty });
+            alert("Product added to cart!");
+        } catch (err) {
+            console.error("Add to cart error:", err.response?.data || err);
+            alert("Failed to add product to cart.");
+        }
+    };
+
+    if (loading || authChecking) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-secondary via-primary to-[#2d2d00] flex items-center justify-center">
                 <p className="text-center text-text-color text-lg">Loading...</p>
@@ -70,7 +107,7 @@ const SearchPageId = () => {
     const productImages = product.images || [product.image_path];
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-secondary via-primary to-[#2d2d00] pb-10 px-2.5 sm:px-5">
+        <div className="min-h-screen bg-gradient-to-br from-secondary via-primary to-[#2d2d00] pb-10 px-2.5 sm:px-5" >
             <Navbar />
 
             <div className="max-w-7xl mx-auto mt-10 mb-20">
@@ -197,13 +234,23 @@ const SearchPageId = () => {
 
                         {/* Action Buttons */}
                         <div className="flex flex-col sm:flex-row gap-3 pt-4">
-                            <button
-                                disabled={product.stock === 0}
-                                className="flex-1 bg-accent text-black py-3 rounded-lg font-semibold hover:bg-hover transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                            >
-                                <ShoppingCart size={20} />
-                                {product.stock > 0 ? "Add to Cart" : "Out of Stock"}
-                            </button>
+                            {product.stock > 0 ? (
+                                <button
+                                    className="flex-1 bg-accent text-black py-3 rounded-lg font-semibold hover:bg-hover transition flex items-center justify-center gap-2"
+                                    onClick={() => handleCartAdd(product.id, quantity)}
+                                >
+                                    <ShoppingCart size={20} />
+                                    {isAuthenticated ? 'Add to Cart' : 'Login to Add to Cart'}
+                                </button>
+                            ) : (
+                                <button
+                                    disabled={product.stock === 0}
+                                    className="flex-1 bg-accent text-black py-3 rounded-lg font-semibold hover:bg-hover transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                >
+                                    <ShoppingCart size={20} />
+                                    Out of Stock
+                                </button>
+                            )}
                             <button className="bg-primary text-text-color px-6 py-3 rounded-lg font-semibold hover:bg-primary/80 transition flex items-center justify-center gap-2">
                                 <Heart size={20} />
                             </button>
@@ -222,7 +269,7 @@ const SearchPageId = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 

@@ -15,7 +15,9 @@ export default function Hero() {
                             Discover premium fitness equipment and accessories designed for serious athletes and home gym enthusiasts. Elevate your training with professional-grade gear.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4">
-                            <button className="bg-accent text-secondary px-8 py-4 font-bold rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2 hover:shadow-[0_10px_25px_rgba(255,235,59,0.4)] hover:-translate-y-0.5">
+                            <button className="bg-accent text-secondary px-8 py-4 font-bold rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2 hover:shadow-[0_10px_25px_rgba(255,235,59,0.4)] hover:-translate-y-0.5"
+                                onClick={() => window.location.href = '/equipment'}
+                            >
                                 Explore Equipment
                                 <ArrowRight size={20} />
                             </button>

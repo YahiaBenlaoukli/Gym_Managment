@@ -9,3 +9,5 @@ router.put("/updateCartItem", authenticateToken, cartContoller.updateCartItemQua
 router.delete("/removeFromCart", authenticateToken, cartContoller.removeFromCart);
 router.post("/confirmOrder", authenticateToken, cartContoller.confirmedOrder);
 router.delete("/clearCart", authenticateToken, cartContoller.clearCart);
+
+module.exports = router;

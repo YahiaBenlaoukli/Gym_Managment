@@ -8,10 +8,12 @@ api.interceptors.response.use(
     response => response,
     error => {
         if (error.response?.status === 401) {
-            // If API returns 401, token is invalid/expired, redirect to login
-            window.location.href = '/';
+            // Just remove the user from app state — no redirect, no reload
+            // Optional: emit an event or call a logout function
+            console.warn("401 Unauthorized — session expired.");
         }
         return Promise.reject(error);
     }
 );
+
 export default api;

@@ -11,18 +11,18 @@ const transporter = nodemailer.createTransport({
 });
 
 exports.addToCart = async (req, res) => {
-    const { userId, productId, quantity } = req.body;
+    const { user_id, product_id, quantity } = req.body;
 
-    if (!userId || !productId || !quantity) {
+    if (!user_id || !product_id || !quantity) {
         console.error("Validation error: Missing fields.");
         return res.status(400).json({ error: "All fields are required." });
     }
     try {
         const connection = await getConnection();
         console.log("Connected to the database successfully.");
-        const creation_date = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-        const cartItem = { userId, productId, quantity, creation_date };
-        const [result] = await connection.query("INSERT INTO cart SET ?", cartItem);
+        const created_at = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+        const cartItem = { user_id, product_id, quantity, created_at };
+        const [result] = await connection.promise().query("INSERT INTO cart SET ?", cartItem);
         console.log("Item added to cart with ID:", result.insertId);
         return res.status(201).json({ message: "Item added to cart.", cartItemId: result.insertId });
     } catch (error) {
@@ -32,21 +32,21 @@ exports.addToCart = async (req, res) => {
 }
 
 exports.viewCart = async (req, res) => {
-    const { userId } = req.body;
+    const user_id = req.user.id;
 
-    if (!userId) {
-        console.error("Validation error: Missing userId field.");
-        return res.status(400).json({ error: "userId field is required." });
+    if (!user_id) {
+        console.error("Validation error: Missing user_id field.");
+        return res.status(400).json({ error: "user_id field is required." });
     }
     try {
         const connection = await getConnection();
         console.log("Connected to the database successfully.");
         const [cartItems] = await connection.promise().query(
-            `SELECT c.id AS cartItemId, c.quantity, p.id AS productId, p.name, p.category, p.description, p.current_price, p.old_price, p.image_path, c.stock
+            `SELECT c.id AS cartItemId, c.quantity, p.id AS productId, p.name, p.category, p.description, p.current_price, p.old_price, p.image_path, c.quantity
              FROM cart c
-             JOIN products p ON c.productId = p.id
-             WHERE c.userId = ?`,
-            [userId]
+             JOIN products p ON c.product_id = p.id
+             WHERE c.user_id = ?`,
+            [user_id]
         );
         return res.status(200).json(cartItems);
     } catch (error) {
@@ -76,9 +76,10 @@ exports.removeFromCart = async (req, res) => {
 };
 
 exports.confirmedOrder = async (req, res) => {
-    const { userId, userEmail, cartItemId, userLocation, userMobile } = req.body;
+    const { cartItemId, userLocation, userMobile } = req.body;
+    const user_id = req.user.id;
 
-    if (!userId || !cartItemId || !userLocation || !userMobile) {
+    if (!userLocation || !userMobile) {
         return res.status(400).json({ error: "All fields are required." });
     }
 
@@ -88,8 +89,8 @@ exports.confirmedOrder = async (req, res) => {
         connection = await getConnection();
         console.log("Connected to the database.");
         const [cartItems] = await connection.promise().query(
-            "SELECT * FROM cart WHERE id = ? AND userId = ?",
-            [cartItemId, userId]
+            "SELECT * FROM cart WHERE id = ? AND user_id = ?",
+            [cartItemId, user_id]
         );
 
         if (cartItems.length === 0) {
@@ -105,7 +106,7 @@ exports.confirmedOrder = async (req, res) => {
             `INSERT INTO orders (user_id, product_id, quantity, location, mobile, order_date)
              VALUES (?, ?, ?, ?, ?, ?)`,
             [
-                userId,
+                user_id,
                 product_id,
                 quantity,
                 userLocation,
