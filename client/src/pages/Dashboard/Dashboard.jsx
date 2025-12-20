@@ -1,9 +1,10 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Hero from "../../components/Hero/Hero.jsx";
 import Navbar from "../../components/Navbar/Navbar.jsx";
 import Footer from "../../components/Footer/Footer.jsx";
 import ShopByCategory from "../../components/Categories/Categories.jsx";
+import { ChevronLeft, ChevronRight, Tag } from "lucide-react";
 import api from "../../services/api.js";
 
 function Dashboard() {
@@ -27,7 +28,42 @@ function Dashboard() {
     const [products, setProducts] = useState(null);
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(false);
+
     const [error, setError] = useState(null);
+    const [currentSlide, setCurrentSlide] = useState(0);
+
+    const nextSlide = () => {
+        if (products && products.length > 0) {
+            setCurrentSlide((prev) => (prev + 1) % Math.ceil(products.length / 3));
+        }
+    };
+
+    const prevSlide = () => {
+        if (products && products.length > 0) {
+            setCurrentSlide((prev) => (prev - 1 + Math.ceil(products.length / 3)) % Math.ceil(products.length / 3));
+        }
+    };
+
+    useEffect(() => {
+        handleGetDiscountedProducts();
+    }, []);
+
+    const handleGetDiscountedProducts = async () => {
+        setLoading(true);
+        setError(null);
+        setProducts(null);
+        setProduct(null);
+        try {
+            const res = await api.get("product/getDiscountedProducts");
+            setProducts(res.data.discountedProducts);
+            console.log("Discounted products:", res.data);
+        } catch (err) {
+            setError(err.response?.data?.error || "Failed to fetch discounted products");
+            console.error("Error fetching discounted products:", err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleShowAllProducts = async () => {
         setLoading(true);
@@ -142,202 +178,103 @@ function Dashboard() {
         <div className="min-h-screen bg-gradient-to-br from-secondary via-primary to-[#2d2d00]">
             <Navbar />
             <Hero />
-            <ShopByCategory />S
-            <div className="max-w-6xl mx-auto py-10 px-5 sm:px-10 md:py-15 lg:py-20">
-                <div className="text-center mb-8 sm:mb-10">
-                    <h1 className="text-white text-3xl sm:text-4xl lg:text-5xl font-bold mb-2.5 drop-shadow-[0_0_20px_rgba(255,235,59,0.3)] tracking-tight">
-                        Product Management
-                    </h1>
-                    <p className="text-inactive-text text-base sm:text-lg">
-                        Manage and view products
-                    </p>
-                </div>
-
-                <div className="flex flex-col gap-6 sm:gap-7.5">
-                    <div className="bg-[rgba(26,26,26,0.95)] backdrop-blur-sm border border-accent/20 rounded-2xl p-6 sm:p-7.5 lg:p-8 shadow-[0_20px_40px_rgba(0,0,0,0.5),0_0_20px_rgba(255,235,59,0.1)]">
-                        <h2 className="text-white text-xl sm:text-2xl font-bold mb-6 drop-shadow-[0_0_15px_rgba(255,235,59,0.3)] tracking-tight border-b-2 border-accent pb-2.5">
-                            Product APIs
-                        </h2>
-
-                        <div className="mb-5">
-                            <button
-                                className="w-full h-12 sm:h-14 bg-accent text-secondary rounded-full text-sm sm:text-base font-semibold uppercase tracking-wide cursor-pointer transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(255,235,59,0.4)] active:translate-y-0 active:shadow-[0_5px_15px_rgba(255,235,59,0.3)] disabled:opacity-60 disabled:cursor-not-allowed relative overflow-hidden"
-                                onClick={handleShowAllProducts}
-                                disabled={loading}
-                            >
-                                <span className="relative z-10">Show All Products</span>
-                            </button>
+            <div className="transform scale-[0.8] origin-top">
+                <ShopByCategory />
+                <div className="max-w-7xl mx-auto py-10 px-5 sm:px-10">
+                    <div className="mb-8 flex items-center justify-between">
+                        <div>
+                            <h2 className="text-white text-3xl font-bold flex items-center gap-3 drop-shadow-[0_0_15px_rgba(255,235,59,0.3)]">
+                                <Tag className="text-accent" />
+                                Special Offers
+                            </h2>
+                            <p className="text-inactive-text mt-2">Grab our limit-time discounts on premium gear</p>
                         </div>
 
-                        <div className="mb-5">
-                            <label className="block text-white text-sm sm:text-base font-semibold mb-2.5">
-                                Select Category
-                            </label>
-                            <div className="flex items-center w-full h-14 sm:h-16 bg-input-bg rounded-lg border-2 border-transparent transition-all duration-300 relative overflow-hidden mb-4 focus-within:border-accent focus-within:shadow-[0_0_15px_rgba(255,235,59,0.3)]">
-                                <select
-                                    value={selectedCategory}
-                                    onChange={(e) => setSelectedCategory(e.target.value)}
-                                    className="flex-1 h-full bg-transparent border-none outline-none text-white text-sm sm:text-base px-5 pr-12 cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%23b0b0b0\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e')] bg-no-repeat bg-[right_20px_center] bg-[length:20px]"
-                                >
-                                    <option value="" className="bg-input-bg text-white">-- Select a category --</option>
-                                    {categories.map((cat) => (
-                                        <option key={cat} value={cat} className="bg-input-bg text-white">
-                                            {cat}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                            <button
-                                className="w-full h-12 sm:h-14 bg-accent text-secondary rounded-full text-sm sm:text-base font-semibold uppercase tracking-wide cursor-pointer transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(255,235,59,0.4)] active:translate-y-0 active:shadow-[0_5px_15px_rgba(255,235,59,0.3)] disabled:opacity-60 disabled:cursor-not-allowed relative overflow-hidden"
-                                onClick={handleShowProductsByCategory}
-                                disabled={loading || !selectedCategory}
-                            >
-                                <span className="relative z-10">Show Products by Category</span>
-                            </button>
-                        </div>
-
-                        {selectedCategory && (
-                            <div className="mb-5">
-                                <label className="block text-white text-sm sm:text-base font-semibold mb-2.5">
-                                    Search in "{selectedCategory}"
-                                </label>
-                                <div className="flex items-center w-full h-14 sm:h-16 bg-input-bg rounded-lg border-2 border-transparent transition-all duration-300 relative overflow-hidden mb-4 focus-within:border-accent focus-within:shadow-[0_0_15px_rgba(255,235,59,0.3)]">
-                                    <input
-                                        type="text"
-                                        placeholder="Enter product name to search"
-                                        value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
-                                        className="flex-1 h-full bg-transparent border-none outline-none text-white text-sm sm:text-base px-5 placeholder:text-inactive-text relative z-10"
-                                    />
-                                </div>
+                        {products && products.length > 3 && (
+                            <div className="flex gap-3">
                                 <button
-                                    className="w-full h-12 sm:h-14 bg-accent text-secondary rounded-full text-sm sm:text-base font-semibold uppercase tracking-wide cursor-pointer transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(255,235,59,0.4)] active:translate-y-0 active:shadow-[0_5px_15px_rgba(255,235,59,0.3)] disabled:opacity-60 disabled:cursor-not-allowed relative overflow-hidden"
-                                    onClick={handleSearchInCategory}
-                                    disabled={loading}
+                                    onClick={prevSlide}
+                                    className="w-10 h-10 rounded-full bg-input-bg border border-accent/20 flex items-center justify-center text-white hover:bg-accent hover:text-secondary transition-all duration-300"
                                 >
-                                    <span className="relative z-10">Search in Category</span>
+                                    <ChevronLeft size={20} />
+                                </button>
+                                <button
+                                    onClick={nextSlide}
+                                    className="w-10 h-10 rounded-full bg-input-bg border border-accent/20 flex items-center justify-center text-white hover:bg-accent hover:text-secondary transition-all duration-300"
+                                >
+                                    <ChevronRight size={20} />
                                 </button>
                             </div>
                         )}
-
-                        <div className="mb-5">
-                            <label className="block text-white text-sm sm:text-base font-semibold mb-2.5">
-                                Product ID
-                            </label>
-                            <div className="flex items-center w-full h-14 sm:h-16 bg-input-bg rounded-lg border-2 border-transparent transition-all duration-300 relative overflow-hidden mb-4 focus-within:border-accent focus-within:shadow-[0_0_15px_rgba(255,235,59,0.3)]">
-                                <input
-                                    type="text"
-                                    placeholder="Enter product ID"
-                                    value={productId}
-                                    onChange={(e) => setProductId(e.target.value)}
-                                    className="flex-1 h-full bg-transparent border-none outline-none text-white text-sm sm:text-base px-5 placeholder:text-inactive-text relative z-10"
-                                />
-                            </div>
-                            <button
-                                className="w-full h-12 sm:h-14 bg-accent text-secondary rounded-full text-sm sm:text-base font-semibold uppercase tracking-wide cursor-pointer transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(255,235,59,0.4)] active:translate-y-0 active:shadow-[0_5px_15px_rgba(255,235,59,0.3)] disabled:opacity-60 disabled:cursor-not-allowed relative overflow-hidden"
-                                onClick={handleShowProductDetails}
-                                disabled={loading}
-                            >
-                                <span className="relative z-10">Show Product Details</span>
-                            </button>
-                        </div>
                     </div>
 
-                    {loading && (
-                        <div className="text-center text-accent text-base sm:text-lg font-semibold py-5 bg-[rgba(255,235,59,0.1)] rounded-lg border border-accent">
-                            Loading...
+                    {loading ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {[1, 2, 3].map((n) => (
+                                <div key={n} className="h-[400px] bg-input-bg/50 rounded-2xl animate-pulse"></div>
+                            ))}
                         </div>
-                    )}
-
-                    {error && (
-                        <div className="text-center text-[#ff4757] text-sm sm:text-base font-semibold py-5 bg-[rgba(255,71,87,0.1)] rounded-lg border border-[#ff4757]">
+                    ) : error ? (
+                        <div className="text-center text-[#ff4757] py-10 bg-[rgba(255,71,87,0.1)] rounded-xl border border-[#ff4757]/30">
                             {error}
                         </div>
-                    )}
-
-                    {products && products.length > 0 && (
-                        <div className="bg-[rgba(26,26,26,0.95)] backdrop-blur-sm border border-accent/20 rounded-2xl p-6 sm:p-7.5 lg:p-8 shadow-[0_20px_40px_rgba(0,0,0,0.5),0_0_20px_rgba(255,235,59,0.1)]">
-                            <h2 className="text-white text-xl sm:text-2xl font-bold mb-5 drop-shadow-[0_0_15px_rgba(255,235,59,0.3)] tracking-tight border-b-2 border-accent pb-2.5">
-                                Products ({products.length})
-                            </h2>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mt-5">
+                    ) : products && products.length > 0 ? (
+                        <div className="overflow-hidden relative">
+                            <div
+                                className="flex transition-transform duration-500 ease-out"
+                                style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+                            >
                                 {products.map((prod) => (
-                                    <div key={prod.id} className="bg-input-bg border-2 border-accent/20 rounded-2xl p-5 transition-all duration-300 hover:border-accent hover:shadow-[0_10px_25px_rgba(255,235,59,0.3)] hover:-translate-y-1">
-                                        <h3 className="text-white text-lg sm:text-xl font-bold mb-4 drop-shadow-[0_0_10px_rgba(255,235,59,0.3)] tracking-tight">
-                                            {prod.name}
-                                        </h3>
-                                        {prod.image_path && (
-                                            <img
-                                                src={prod.image_path}
-                                                alt={prod.name}
-                                                className="w-full h-auto rounded-lg mb-4 max-h-[300px] object-cover"
-                                            />
-                                        )}
-                                        {prod.category && (
-                                            <p className="text-inactive-text text-sm sm:text-base mb-2.5">
-                                                Category: {prod.category}
-                                            </p>
-                                        )}
-                                        {prod.price && (
-                                            <p className="text-accent text-base sm:text-lg font-semibold mb-2.5">
-                                                Price: ${prod.price}
-                                            </p>
-                                        )}
-                                        {prod.description && (
-                                            <p className="text-white text-sm sm:text-base leading-relaxed mb-2.5">
-                                                {prod.description}
-                                            </p>
-                                        )}
-                                        <p className="text-inactive-text text-xs sm:text-sm mt-2.5 pt-2.5 border-t border-accent/20">
-                                            ID: {prod.id}
-                                        </p>
+                                    <div key={prod.id} className="w-full md:w-1/2 lg:w-1/3 flex-shrink-0 px-3">
+                                        <div className="bg-[rgba(26,26,26,0.95)] border border-accent/20 rounded-2xl p-4 h-full group hover:border-accent hover:shadow-[0_0_20px_rgba(255,235,59,0.15)] transition-all duration-300">
+                                            <div className="relative overflow-hidden rounded-xl mb-4 aspect-[4/3]">
+                                                {(prod.discount || (prod.old_price && prod.current_price && Math.round(((prod.old_price - prod.current_price) / prod.old_price) * 100))) > 0 && (
+                                                    <div className="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full z-10 shadow-lg">
+                                                        {prod.discount || Math.round(((prod.old_price - prod.current_price) / prod.old_price) * 100)}% OFF
+                                                    </div>
+                                                )}
+                                                <img
+                                                    src={prod.image_path || "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=800"}
+                                                    alt={prod.name}
+                                                    className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+                                                />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                                                    <button
+                                                        onClick={() => {
+                                                            setProductId(prod.id);
+                                                            handleShowProductDetails();
+                                                        }}
+                                                        className="w-full bg-accent text-secondary py-2 rounded-lg font-bold text-sm uppercase tracking-wider hover:bg-white transition-colors"
+                                                    >
+                                                        View Details
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-2">
+                                                <div className="flex justify-between items-start">
+                                                    <h3 className="text-white font-bold text-lg line-clamp-1">{prod.name}</h3>
+                                                    <div className="flex flex-col items-end">
+                                                        <span className="text-accent font-bold">${prod.current_price || prod.price}</span>
+                                                        {(prod.old_price || prod.originalPrice) && (
+                                                            <span className="text-inactive-text text-xs line-through">${prod.old_price || prod.originalPrice}</span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <p className="text-inactive-text text-sm line-clamp-2 min-h-[40px]">{prod.description}</p>
+                                                <div className="pt-3 border-t border-white/5 flex items-center justify-between text-xs text-inactive-text">
+                                                    <span>{prod.category}</span>
+                                                    <span>{prod.stock > 0 ? "In Stock" : "Out of Stock"}</span>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
                         </div>
-                    )}
-
-                    {product && (
-                        <div className="bg-[rgba(26,26,26,0.95)] backdrop-blur-sm border border-accent/20 rounded-2xl p-6 sm:p-7.5 lg:p-8 shadow-[0_20px_40px_rgba(0,0,0,0.5),0_0_20px_rgba(255,235,59,0.1)]">
-                            <h2 className="text-white text-xl sm:text-2xl font-bold mb-5 drop-shadow-[0_0_15px_rgba(255,235,59,0.3)] tracking-tight border-b-2 border-accent pb-2.5">
-                                Product Details
-                            </h2>
-                            <div className="bg-input-bg border-2 border-accent/20 rounded-2xl p-5 max-w-2xl mx-auto transition-all duration-300 hover:border-accent hover:shadow-[0_10px_25px_rgba(255,235,59,0.3)] hover:-translate-y-1">
-                                <h3 className="text-white text-lg sm:text-xl font-bold mb-4 drop-shadow-[0_0_10px_rgba(255,235,59,0.3)] tracking-tight">
-                                    {product.name}
-                                </h3>
-                                {product.image_path && (
-                                    <img
-                                        src={product.image_path}
-                                        alt={product.name}
-                                        className="w-full h-auto rounded-lg mb-4 max-h-[300px] object-cover"
-                                    />
-                                )}
-                                {product.category && (
-                                    <p className="text-inactive-text text-sm sm:text-base mb-2.5">
-                                        Category: {product.category}
-                                    </p>
-                                )}
-                                {product.price && (
-                                    <p className="text-accent text-base sm:text-lg font-semibold mb-2.5">
-                                        Price: ${product.price}
-                                    </p>
-                                )}
-                                {product.description && (
-                                    <p className="text-white text-sm sm:text-base leading-relaxed mb-2.5">
-                                        {product.description}
-                                    </p>
-                                )}
-                                <p className="text-inactive-text text-xs sm:text-sm mt-2.5 pt-2.5 border-t border-accent/20">
-                                    ID: {product.id}
-                                </p>
-                            </div>
-                        </div>
-                    )}
-
-                    {products && products.length === 0 && (
-                        <div className="text-center text-inactive-text text-base sm:text-lg py-10 bg-[rgba(26,26,26,0.95)] rounded-2xl border border-accent/20">
-                            No products found
+                    ) : (
+                        <div className="text-center text-inactive-text py-10">
+                            No special offers available at the moment.
                         </div>
                     )}
                 </div>

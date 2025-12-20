@@ -26,7 +26,7 @@ function AdminLogin() {
         try {
             const res = await api.post('admin/auth/adminLogin', loginData);
             console.log(res);
-            navigate('/admin/products');
+            navigate('/admin/dashboard');
         } catch (err) {
             setError(err.response?.data?.message || "Login failed. Please check your credentials.");
         } finally {
@@ -35,7 +35,7 @@ function AdminLogin() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-secondary via-primary to-[#2d2d00] flex flex-col items-center justify-center p-5">
+        <div className="min-h-screen bg-[rgba(26,26,26,0.95)] backdrop-blur-sm bg-gradient-to-br from-secondary via-primary to-[#2d2d00] flex flex-col items-center justify-center p-5">
             <div className="flex flex-col items-center mb-8 gap-4">
                 <div className="bg-gradient-to-r from-accent to-hover w-16 h-16 rounded-full flex items-center justify-center shadow-[0_5px_15px_rgba(255,235,59,0.3)]">
                     <FaUserShield className="w-8 h-8 text-secondary" />

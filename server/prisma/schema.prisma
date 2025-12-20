@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model admin {
+  id       Int    @id @default(autoincrement())
+  email    String @unique(map: "email") @db.VarChar(255)
+  password String @db.VarChar(255)
+}
+
+model cart {
+  id         Int       @id @default(autoincrement())
+  user_id    Int
+  product_id Int
+  quantity   Int?
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+
+  @@unique([user_id, product_id], map: "user_id")
+}
+
+model orders {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  product_id Int
+  quantity   Int
+  location   String   @db.VarChar(255)
+  mobile     String   @db.VarChar(255)
+  order_date DateTime @default(now()) @db.Timestamp(0)
+  users      users    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "orders_ibfk_1")
+  products   products @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "orders_ibfk_2")
+
+  @@index([product_id], map: "product_id")
+  @@index([user_id], map: "user_id")
+}
+
+model product_images {
+  id         Int       @id @default(autoincrement())
+  product_id Int?
+  image_path String?   @db.VarChar(500)
+  is_primary Boolean?  @default(false)
+  products   products? @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "product_images_ibfk_1")
+
+  @@index([product_id], map: "product_id")
+}
+
+model products {
+  id             Int              @id @default(autoincrement())
+  name           String           @db.VarChar(255)
+  category       String           @db.VarChar(100)
+  description    String?          @db.Text
+  current_price  Decimal?         @db.Decimal(10, 2)
+  old_price      Decimal?         @db.Decimal(10, 2)
+  image_path     String?          @db.VarChar(500)
+  stock          Int?
+  created_at     DateTime?        @default(now()) @db.Timestamp(0)
+  orders         orders[]
+  product_images product_images[]
+}
+
+model user_otp {
+  id         Int       @id @default(autoincrement())
+  user_id    Int       @unique(map: "user_id")
+  otp        String    @db.VarChar(255)
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  expires_at DateTime  @db.DateTime(0)
+  used       Boolean?  @default(false)
+  users      users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "user_otp_ibfk_1")
+}
+
+model users {
+  id       Int       @id @default(autoincrement())
+  username String?   @db.VarChar(100)
+  email    String?   @db.VarChar(100)
+  password String?   @db.VarChar(255)
+  verified Boolean?  @default(false)
+  orders   orders[]
+  user_otp user_otp?
+}

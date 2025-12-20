@@ -1,7 +1,7 @@
-const getConnection = require('../../services/db.js');
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
+import prisma from "../../services/prisma.js";
 
 // Create assets folder if it doesn't exist
 const assetsDir = path.join(process.cwd(), 'uploads/products');
@@ -40,9 +40,9 @@ const upload = multer({
 });
 
 // Export the upload middleware
-exports.uploadProductImages = upload.array('images', 5);
+export const uploadProductImages = upload.array('images', 5);
 
-exports.adminAddProduct = async (req, res) => {
+export const adminAddProduct = async (req, res) => {
     const { name, category, price, description, stock } = req.body;
 
     if (!name || !category || !price || !description || !stock) {
@@ -59,8 +59,8 @@ exports.adminAddProduct = async (req, res) => {
     }
 
     try {
-        const connection = await getConnection();
-        console.log("Connected to the database successfully.");
+        /*const connection = await getConnection();
+        console.log("Connected to the database successfully.");*/
 
         const creation_date = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
 
@@ -78,13 +78,23 @@ exports.adminAddProduct = async (req, res) => {
             image_path = "/uploads/Placeholder_view_vector.svg.png";
         }
 
-        await connection.promise().query(
+        /* await connection.promise().query(
             "INSERT INTO products (name, category, description, current_price, image_path, stock, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
             [name, category, description, price, image_path, stock, creation_date]
-        );
-
+        );*/
+        const result = await prisma.products.create({
+            data: {
+                name: name,
+                category: category,
+                description: description,
+                current_price: price,
+                image_path: image_path,
+                stock: stock,
+                created_at: creation_date
+            }
+        })
         console.log("Product added successfully.");
-        await connection.end();
+        //await connection.end();
 
         return res.status(201).json({
             message: "Product added successfully.",
@@ -109,7 +119,7 @@ exports.adminAddProduct = async (req, res) => {
     }
 };
 
-exports.adminDeleteProduct = async (req, res) => {
+export const adminDeleteProduct = async (req, res) => {
     const { productId } = req.body;
 
     if (!productId) {
@@ -117,14 +127,20 @@ exports.adminDeleteProduct = async (req, res) => {
         return res.status(400).json({ error: "productId field is required." });
     }
     try {
-        const connection = await getConnection();
+        /* const connection = await getConnection();
         console.log("Connected to the database successfully.");
         const [result] = await connection.promise().query(
             "DELETE FROM products WHERE id = ?",
             [productId]
         );
 
-        await connection.end();
+        await connection.end();*/
+        const result = await prisma.products.delete({
+            where: {
+                id: parseInt(productId)
+            }
+        })
+        console.log("Product deleted successfully.");
         return res.status(200).json({ message: "Product deleted successfully." });
     } catch (error) {
         console.error("Database error:", error);
@@ -132,7 +148,7 @@ exports.adminDeleteProduct = async (req, res) => {
     }
 };
 
-exports.adminUpdateProduct = async (req, res) => {
+export const adminUpdateProduct = async (req, res) => {
     const { productId, field, newattributes } = req.body;
 
     if (!productId || !newattributes || !field) {
@@ -140,10 +156,18 @@ exports.adminUpdateProduct = async (req, res) => {
         return res.status(400).json({ error: "All fields are required." });
     }
     try {
-        const connection = await getConnection();
+        /*const connection = await getConnection();
         console.log("Connected to the database successfully.");
         await connection.promise().query(`UPDATE products SET ${field} = ? WHERE id = ?`, [newattributes, productId]);
-        await connection.end();
+        await connection.end();*/
+        await prisma.products.update({
+            where: {
+                id: parseInt(productId)
+            },
+            data: {
+                [field]: newattributes
+            }
+        })
         return res.status(200).json({ message: "Product updated successfully." });
     } catch (error) {
         console.error("Database error:", error);
@@ -151,7 +175,7 @@ exports.adminUpdateProduct = async (req, res) => {
     };
 };
 
-exports.adminDiscountProduct = async (req, res) => {
+export const adminDiscountProduct = async (req, res) => {
     const { productId, newprice, oldprice } = req.body;
 
     if (!productId || !newprice || !oldprice) {
@@ -159,9 +183,18 @@ exports.adminDiscountProduct = async (req, res) => {
         return res.status(400).json({ error: "All fields are required." });
     }
     try {
-        const connection = await getConnection();
-        console.log("Connected to the database successfully.");
-        await connection.promise().query(`UPDATE products SET current_price = ?, old_price = ? WHERE id = ?`, [newprice, oldprice, productId]);
+        /* const connection = await getConnection();
+         console.log("Connected to the database successfully.");
+         await connection.promise().query(`UPDATE products SET current_price = ?, old_price = ? WHERE id = ?`, [newprice, oldprice, productId]);*/
+        await prisma.products.update({
+            where: {
+                id: parseInt(productId)
+            },
+            data: {
+                current_price: parseFloat(newprice),
+                old_price: parseFloat(oldprice)
+            }
+        })
         return res.status(200).json({ message: "Product price updated successfully." });
     } catch (error) {
         console.error("Database error:", error);
@@ -169,17 +202,44 @@ exports.adminDiscountProduct = async (req, res) => {
     }
 };
 
-exports.dashboardStats = async (req, res) => {
+export const dashboardStats = async (req, res) => {
     try {
-        const connection = await getConnection();
-        console.log("Connected to the database successfully.");
-        const [totalProducts] = await connection.promise().query("SELECT COUNT(id) AS total FROM products");
+        const totalProducts = await prisma.products.count();
 
-        const [lowStockList] = await connection.promise().query("SELECT id, name, category, current_price, stock FROM products WHERE stock <= 10");
+        const lowStockList = await prisma.products.findMany({
+            where: {
+                stock: {
+                    lte: 10,
+                },
+            },
+            select: {
+                id: true,
+                name: true,
+                category: true,
+                current_price: true,
+                stock: true,
+            },
+        });
 
-        return res.status(200).json({ totalProducts: totalProducts[0].total, lowStockCount: lowStockList.length, lowStockList });
+        return res.status(200).json({
+            totalProducts, // already a Number
+            lowStockCount: lowStockList.length,
+            lowStockList,
+        });
+
     } catch (error) {
         console.error("Database error:", error);
-        return res.status(500).json({ error: "Internal server error." });
+        return res.status(500).json({ error: "Database error" });
     }
 };
+
+const adminController = {
+    adminAddProduct,
+    adminDeleteProduct,
+    adminUpdateProduct,
+    adminDiscountProduct,
+    dashboardStats,
+    uploadProductImages
+};
+
+export default adminController;

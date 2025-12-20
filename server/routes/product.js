@@ -1,11 +1,13 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const productController = require('../controllers/productController.js');
-const authenticateToken = require('../middleware/AuthenticationToken.js')
+import productController from '../controllers/productController.js';
 
 router.post("/showProductsByCategory", productController.showproductsbycategory);
 router.get("/showAllProducts", productController.showallproducts);
 router.post("/showProductDetails", productController.showproductdetails);
 router.post("/searchProductsByName", productController.searchproductsbyname);
+router.get("/getDiscountedProducts", productController.getDiscountedProducts);
+router.get("/getDiscountedProducts", productController.getDiscountedProducts);
 
-module.exports = router;
+
+export default router;

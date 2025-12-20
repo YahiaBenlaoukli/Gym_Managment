@@ -1,17 +1,22 @@
-const getConnection = require('../../services/db.js');
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import prisma from "../../services/prisma.js";
 
-exports.loginAdmin = async (req, res) => {
+export const loginAdmin = async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {
         console.error("Validation error: Missing fields.");
         return res.status(400).json({ error: "Email and password are required." });
     }
     try {
-        const connection = await getConnection();
-        console.log("Connected to the database successfully.");
-        const [admins] = await connection.promise().query("SELECT * FROM admin WHERE email = ?", [email]);
+        /* const connection = await getConnection();
+         console.log("Connected to the database successfully.");
+         const [admins] = await connection.promise().query("SELECT * FROM admin WHERE email = ?", [email]);*/
+        const admins = await prisma.admin.findMany({
+            where: {
+                email: email
+            }
+        })
         if (admins.length === 0) {
             return res.status(401).json({ error: "Invalid email or password." });
         }
@@ -29,7 +34,14 @@ exports.loginAdmin = async (req, res) => {
     }
 };
 
-exports.logoutAdmin = (req, res) => {
+export const logoutAdmin = (req, res) => {
     res.clearCookie("token");
     return res.status(200).json({ message: "Logout successful." });
 }
+
+const adminAuthController = {
+    loginAdmin,
+    logoutAdmin
+};
+
+export default adminAuthController;

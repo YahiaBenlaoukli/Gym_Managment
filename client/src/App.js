@@ -12,6 +12,8 @@ import Cart from "./pages/Cart/Cart.jsx";
 //admin components
 import AdminLogin from "./pages/AdminAuthentication/AdminAuthentication.jsx";
 import AdminProductManagement from "./pages/AdminProductManagement/AdminProductManagement.jsx";
+import AdminDashboard from "./pages/AdminDashboard/AdminDashboard.jsx";
+import AdminOrders from "./pages/AdminOrders/AdminOrders.jsx";
 
 
 function App() {
@@ -23,7 +25,9 @@ function App() {
           <Route path="/auth" element={<Authentication />} />
           <Route path="/verify_otp" element={<OTPVerification />} />
           <Route path="/admin" element={<AdminLogin />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/products" element={<AdminProductManagement />} />
+          <Route path="/admin/orders" element={<AdminOrders />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/product" element={<ProductDetails />} />
           <Route path="/cart" element={<Cart />} />

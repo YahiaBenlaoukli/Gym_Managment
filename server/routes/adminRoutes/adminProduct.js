@@ -1,8 +1,8 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const adminproductController = require('../../controllers/adminControllers/adminProductController.js');
-const productController = require('../../controllers/productController.js');
-const authenticateToken = require('../../middleware/adminAuthenticateToken.js')
+import adminproductController from '../../controllers/adminControllers/adminProductController.js';
+import productController from '../../controllers/productController.js';
+import authenticateToken from '../../middleware/adminAuthenticateToken.js';
 
 router.post("/adminAddProduct", authenticateToken, adminproductController.uploadProductImages, adminproductController.adminAddProduct);
 router.delete("/adminDeleteProduct", authenticateToken, adminproductController.adminDeleteProduct);
@@ -13,4 +13,4 @@ router.get("/showAllProducts", authenticateToken, productController.showallprodu
 router.post("/showProductDetails", authenticateToken, productController.showproductdetails);
 router.post("/searchProductsByName", authenticateToken, productController.searchproductsbyname);
 
-module.exports = router;
+export default router;

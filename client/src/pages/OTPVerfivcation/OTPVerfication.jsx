@@ -11,6 +11,7 @@ function OTPVerification() {
     const params = new URLSearchParams(location.search);
     const userId = params.get("user_id");
     const userUsername = params.get("user_username");
+    const userEmail = params.get("user_email");
 
     useEffect(() => {
         if (inputRefs.current[0]) {
@@ -74,10 +75,10 @@ function OTPVerification() {
         console.log("OTP:", otpCode);
         alert(`OTP entered: ${otpCode}`);
         try {
-            const res = await api.post('auth/verify_otp', { user_id: userId, user_username: userUsername, otp: otpCode });
+            const res = await api.post('auth/verify_otp', { user_id: userId, user_username: userUsername, user_email: userEmail, otp: otpCode });
             console.log(res);
             alert("OTP verified successfully");
-            navigate('/dashboard');
+            navigate('/');
         } catch (err) {
             alert(err.response?.data?.message || "Verification failed ❌");
         }
