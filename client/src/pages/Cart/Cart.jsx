@@ -33,11 +33,7 @@ function Cart() {
         setLoading(true);
         try {
             const res = await api.get(`cart/viewCart`);
-            const items = Array.isArray(res.data)
-                ? res.data
-                : Array.isArray(res.data?.cartItems)
-                    ? res.data.cartItems
-                    : [];
+            const items = res.data?.cart_items || [];
             setCartItems(items);
             setError(null);
         } catch (err) {
@@ -53,7 +49,7 @@ function Cart() {
 
     const resetCheckoutFlow = () => {
         setCheckoutStep('review');
-        setSelectedItem(null);
+        setCheckoutStep('review');
         setUserMobile('');
         setUserWilaya('');
         setUserCity('');
@@ -80,8 +76,7 @@ function Cart() {
         }
     };
 
-    const beginCheckout = (item) => {
-        setSelectedItem(item);
+    const beginCheckout = () => {
         setCheckoutStep('details');
         setCheckoutError(null);
         setCheckoutMessage(null);
@@ -92,8 +87,8 @@ function Cart() {
     };
 
     const confirmOrder = async () => {
-        if (!selectedItem) {
-            setCheckoutError("Select an item to confirm.");
+        if (cartItems.length === 0) {
+            setCheckoutError("Cart is empty.");
             return;
         }
         if (!userMobile.trim() || !userWilaya.trim() || !userCity.trim() || !userAddress.trim()) {
@@ -105,7 +100,13 @@ function Cart() {
             // Combine location fields into a single string for backend
             const userLocation = `${userWilaya}, ${userCity}, ${userAddress}`;
             await api.post("cart/confirmOrder", {
-                cartItemId: selectedItem.cartItemId,
+                cartItemId: cartItems[0].cartItemId, // Sending a representative ID, or cartId if available. 
+                // Wait, I need cartId. The previous fetchCart returns items. 
+                // Let's assume sending the first item ID is enough for the backend to find the cart, 
+                // OR better, I should check what viewCart returns. 
+                // The user request showed: "id": 1 (cart id), "cart_items": [...]
+                // So res.data is the cart object itself.
+                cartId: cartItems[0]?.cart_id,
                 userLocation,
                 userMobile
             });
@@ -125,7 +126,7 @@ function Cart() {
         return cartItems.reduce(
             (acc, item) => {
                 const quantity = Number(item.quantity) || 0;
-                const price = Number(item.current_price) || 0;
+                const price = Number(item.products?.current_price) || 0;
                 acc.totalQuantity += quantity;
                 acc.totalPrice += price * quantity;
                 return acc;
@@ -170,15 +171,16 @@ function Cart() {
             <div className="space-y-10">
                 <div className="grid gap-6">
                     {cartItems.map(item => {
-                        const priceValue = Number(item.current_price) || 0;
+                        const product = item.products || {};
+                        const priceValue = Number(product.current_price) || 0;
                         return (
                             <div
-                                key={item.cartItemId}
+                                key={item.id}
                                 className="flex flex-col gap-5 rounded-2xl border border-accent/20 bg-[rgba(26,26,26,0.95)] p-5 text-white shadow-[0_20px_40px_rgba(0,0,0,0.4)] transition-all duration-300 hover:border-accent hover:-translate-y-1 hover:shadow-[0_25px_45px_rgba(0,0,0,0.55)] md:flex-row"
                             >
                                 <img
-                                    src={`http://localhost:3000${item.image_path}`}
-                                    alt={item.name}
+                                    src={`http://localhost:3000${product.image_path}`}
+                                    alt={product.name}
                                     className="h-44 w-full rounded-2xl object-cover md:w-44"
                                     onError={e => {
                                         e.target.src = 'https://placehold.co/160x160?text=Image';
@@ -187,13 +189,13 @@ function Cart() {
                                 <div className="flex flex-1 flex-col justify-between">
                                     <div>
                                         <p className="text-xs uppercase tracking-[0.2em] text-inactive-text">
-                                            {item.category || 'Uncategorized'}
+                                            {product.category || 'Uncategorized'}
                                         </p>
                                         <h2 className="text-2xl font-bold text-white drop-shadow-[0_0_12px_rgba(255,235,59,0.25)]">
-                                            {item.name}
+                                            {product.name}
                                         </h2>
                                         <p className="mt-3 text-sm text-inactive-text">
-                                            {item.description}
+                                            {product.description}
                                         </p>
                                     </div>
                                     <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
@@ -204,7 +206,7 @@ function Cart() {
                                             <div className="mt-2 flex items-center gap-3">
                                                 <button
                                                     className="h-9 w-9 rounded-full border border-accent/50 text-lg font-bold text-accent transition hover:bg-accent hover:text-secondary"
-                                                    onClick={() => handleQuantityChange(item.cartItemId, Number(item.quantity) - 1)}
+                                                    onClick={() => handleQuantityChange(item.id, Number(item.quantity) - 1)}
                                                     disabled={Number(item.quantity) <= 1}
                                                 >
                                                     -
@@ -212,7 +214,7 @@ function Cart() {
                                                 <p className="text-2xl font-bold">{item.quantity}</p>
                                                 <button
                                                     className="h-9 w-9 rounded-full border border-accent/50 text-lg font-bold text-accent transition hover:bg-accent hover:text-secondary"
-                                                    onClick={() => handleQuantityChange(item.cartItemId, Number(item.quantity) + 1)}
+                                                    onClick={() => handleQuantityChange(item.id, Number(item.quantity) + 1)}
                                                 >
                                                     +
                                                 </button>
@@ -227,19 +229,11 @@ function Cart() {
                                             </p>
                                             <button
                                                 className="mt-3 text-xs uppercase tracking-[0.2em] text-[#ff6b6b] hover:text-[#ff8787]"
-                                                onClick={() => removeFromCart(item.cartItemId)}
+                                                onClick={() => removeFromCart(item.id)}
                                             >
                                                 Remove
                                             </button>
                                         </div>
-                                    </div>
-                                    <div className="mt-4 flex flex-wrap gap-3">
-                                        <button
-                                            className="rounded-full border border-accent/50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-accent transition hover:bg-accent hover:text-secondary"
-                                            onClick={() => beginCheckout(item)}
-                                        >
-                                            Confirm
-                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -263,10 +257,10 @@ function Cart() {
                             </span>
                         </div>
 
-                        {checkoutStep === 'details' && selectedItem && (
+                        {checkoutStep === 'details' && (
                             <div className="mt-6 space-y-4">
                                 <p className="text-sm text-inactive-text">
-                                    Confirming: <span className="text-white font-semibold">{selectedItem.name}</span>
+                                    Confirming order for <span className="text-white font-semibold">{totalQuantity} items</span>
                                 </p>
                                 <div className="space-y-4">
                                     <div>
@@ -347,10 +341,15 @@ function Cart() {
                             </div>
                         )}
 
-                        {checkoutStep === 'review' && (
-                            <p className="mt-4 text-sm text-inactive-text">
-                                Select an item and hit Confirm to proceed.
-                            </p>
+                        {checkoutStep === 'review' && cartItems.length > 0 && (
+                            <div className="mt-6">
+                                <button
+                                    className="w-full rounded-full bg-accent px-5 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-secondary transition hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(255,235,59,0.4)]"
+                                    onClick={beginCheckout}
+                                >
+                                    Proceed to Checkout
+                                </button>
+                            </div>
                         )}
 
                         {checkoutMessage && (

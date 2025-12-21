@@ -24,15 +24,31 @@ export const addToCart = async (req, res) => {
         console.log("Connected to the database successfully.");
         const cartItem = { user_id, product_id, quantity, created_at };
         const [result] = await connection.promise().query("INSERT INTO cart SET ?", cartItem);?*/
-        const result = await prisma.cart.create({
-            data: {
-                user_id: parseInt(user_id),
+        const cart = await prisma.carts.upsert({
+            where: { user_id: parseInt(user_id) },
+            update: {},
+            create: { user_id: parseInt(user_id) }
+        });
+
+        console.log("Cart created with ID:", cart.id);
+        await prisma.cart_items.upsert({
+            where: {
+                cart_id_product_id: {
+                    cart_id: cart.id,
+                    product_id: parseInt(product_id)
+                }
+            },
+            update: {
+                quantity: { increment: 1 }
+            },
+            create: {
+                cart_id: cart.id,
                 product_id: parseInt(product_id),
-                quantity: parseInt(quantity),
+                quantity: parseInt(quantity)
             }
-        })
-        console.log("Item added to cart with ID:", result.id);
-        return res.status(201).json({ message: "Item added to cart.", cartItemId: result.id });
+        });
+        console.log("Item added to cart with ID:", cart.id);
+        return res.status(201).json({ message: "Item added to cart.", cartItemId: cart.id });
     } catch (error) {
         console.error("Database error:", error);
         return res.status(500).json({ error: "Internal server error." });
@@ -56,13 +72,22 @@ export const viewCart = async (req, res) => {
              WHERE c.user_id = ?`,
             [user_id]
         );*/
-        const cartItems = await prisma.$queryRaw`
-            SELECT c.id AS cartItemId, c.quantity, p.id AS productId, p.name, p.category, p.description, p.current_price, p.old_price, p.image_path, c.quantity
-            FROM cart c
-            JOIN products p ON c.product_id = p.id
-            WHERE c.user_id = ${user_id}
-        `
-        return res.status(200).json(cartItems);
+        const cart = await prisma.carts.findUnique({
+            where: {
+                user_id: Number(user_id)
+            },
+            include: {
+                cart_items: {
+                    include: {
+                        products: true
+                    }
+                }
+            }
+        });
+
+
+
+        return res.status(200).json(cart);
     } catch (error) {
         console.error("Database error:", error);
         return res.status(500).json({ error: "Internal server error." });
@@ -82,7 +107,7 @@ export const removeFromCart = async (req, res) => {
             "DELETE FROM cart WHERE id = ?",
             [cartItemId]
         );*/
-        const result = await prisma.cart.delete({
+        const result = await prisma.cart_items.delete({
             where: {
                 id: parseInt(cartItemId)
             }

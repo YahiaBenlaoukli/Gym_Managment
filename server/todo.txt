@@ -1,3 +1,7 @@
-adding the discounted products to the dashboard
+fixing the user dashboard
 
-complete the prisma
+fixing the order dashboard
+
+fixing the light mode
+
+fixing cart logic

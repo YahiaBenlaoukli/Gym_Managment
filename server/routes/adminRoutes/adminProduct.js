@@ -12,5 +12,6 @@ router.get("/dashboardStats", authenticateToken, adminproductController.dashboar
 router.get("/showAllProducts", authenticateToken, productController.showallproducts);
 router.post("/showProductDetails", authenticateToken, productController.showproductdetails);
 router.post("/searchProductsByName", authenticateToken, productController.searchproductsbyname);
+router.post("/showProductsByCategory", authenticateToken, productController.showproductsbycategory);
 
 export default router;

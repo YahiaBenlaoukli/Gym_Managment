@@ -117,7 +117,7 @@ function ShopByCategory() {
         <div className="min-h-screen pb-10 px-2.5 sm:px-5">
             <div className="max-w-[1400px] mx-auto py-10 px-2.5 sm:px-10 md:py-15 lg:py-20">
                 <div className="text-center mb-8 sm:mb-10">
-                    <h1 className="text-white text-3xl sm:text-4xl lg:text-5xl font-bold mb-2.5 drop-shadow-[0_0_20px_rgba(255,235,59,0.3)] tracking-tight">
+                    <h1 className="text-gray-900 dark:text-white text-3xl sm:text-4xl lg:text-5xl font-bold mb-2.5 drop-shadow-sm dark:drop-shadow-[0_0_20px_rgba(255,235,59,0.3)] tracking-tight">
                         Might Interest You
                     </h1>
                 </div>
@@ -132,7 +132,7 @@ function ShopByCategory() {
                                 key={category.name}
                                 ref={(el) => (cardRefs.current[index] = el)}
                                 data-index={index}
-                                className={`relative group cursor-pointer bg-[rgba(26,26,26,0.95)] backdrop-blur-sm border-2 border-accent/20 rounded-2xl overflow-hidden transition-all duration-500 hover:border-accent hover:shadow-[0_10px_25px_rgba(255,235,59,0.3)] hover:-translate-y-1 ${isVisible
+                                className={`relative group cursor-pointer bg-white dark:bg-[rgba(26,26,26,0.95)] backdrop-blur-sm border border-gray-200 dark:border-2 dark:border-accent/20 rounded-2xl overflow-hidden transition-all duration-500 hover:border-accent hover:shadow-lg dark:hover:shadow-[0_10px_25px_rgba(255,235,59,0.3)] hover:-translate-y-1 ${isVisible
                                     ? 'opacity-100 translate-y-0'
                                     : 'opacity-0 translate-y-20'
                                     }`}

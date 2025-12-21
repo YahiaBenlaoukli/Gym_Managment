@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import React, { useState } from 'react';
+import { FaSearch } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import AdminNavbar from '../../components/AdminNavbar/AdminNavbar';
@@ -11,6 +12,7 @@ const AdminProductManagement = () => {
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState(null);
     const [error, setError] = useState(null);
+    const [selectedCategory, setSelectedCategory] = useState('');
     const navigate = useNavigate();
 
     const categories = [
@@ -85,6 +87,30 @@ const AdminProductManagement = () => {
             setActiveView('products');
         } catch (err) {
             setError(err.response?.data?.error || 'Failed to search products');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Filter by Category
+    const handleCategoryFilter = async (category) => {
+        setSelectedCategory(category);
+        setSearchQuery(''); // Clear search query when filtering by category
+
+        if (!category) {
+            fetchAllProducts();
+            return;
+        }
+
+        setLoading(true);
+        setError(null);
+        setMessage(null);
+        try {
+            const res = await api.post('admin/product/showProductsByCategory', { category });
+            setProducts(res.data.products || []);
+            setActiveView('products');
+        } catch (err) {
+            setError(err.response?.data?.error || 'Failed to fetch products by category');
         } finally {
             setLoading(false);
         }
@@ -233,7 +259,8 @@ const AdminProductManagement = () => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-secondary via-primary to-[#2d2d00]">
             <AdminNavbar
-                showSearch={true}
+
+                showSearch={false}
                 searchQuery={searchQuery}
                 onSearchChange={(e) => setSearchQuery(e.target.value)}
                 onSearchSubmit={handleSearch}
@@ -246,6 +273,42 @@ const AdminProductManagement = () => {
 
             <div className="md:ml-64 transition-all duration-300">
                 <div className="max-w-7xl mx-auto py-10 px-5">
+                    {/* Search Bar & Category Filter */}
+                    <div className="mb-8 flex flex-col md:flex-row gap-4">
+                        <div className="w-full md:w-64">
+                            <select
+                                value={selectedCategory}
+                                onChange={(e) => handleCategoryFilter(e.target.value)}
+                                className="w-full h-[50px] bg-[#1a1a0a] border border-accent/20 rounded-lg px-4 text-white focus:outline-none focus:border-accent transition-all cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%23b0b0b0\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e')] bg-no-repeat bg-[right_16px_center] bg-[length:20px]"
+                            >
+                                <option value="" className="bg-input-bg text-white">All Categories</option>
+                                {categories.map((cat) => (
+                                    <option key={cat} value={cat} className="bg-input-bg text-white">
+                                        {cat}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="relative flex-1">
+                            <input
+                                type="text"
+                                placeholder="Search products..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                                className="w-full h-[50px] bg-[#1a1a0a] border border-accent/20 rounded-lg py-3 pl-10 pr-4 text-white focus:outline-none focus:border-accent transition-all"
+                            />
+                            <FaSearch className="absolute left-3 top-3.5 text-gray-400" />
+                        </div>
+                        <button
+                            onClick={handleSearch}
+                            className="bg-accent text-secondary px-6 h-[50px] rounded-lg font-bold hover:shadow-[0_0_15px_rgba(255,235,59,0.4)] transition-all"
+                        >
+                            Search
+                        </button>
+                    </div>
+
                     {/* Status Messages */}
                     {loading && (
                         <div className="text-center text-accent text-base font-semibold py-5 bg-[rgba(255,235,59,0.1)] rounded-lg border border-accent mb-6">
@@ -463,7 +526,8 @@ const AdminProductManagement = () => {
                                         <option value="">Select a field</option>
                                         <option value="name">Name</option>
                                         <option value="category">Category</option>
-                                        <option value="price">Price</option>
+                                        <option value="current_price">Price</option>
+                                        <option value="old_price">Old Price</option>
                                         <option value="description">Description</option>
                                         <option value="stock">Stock</option>
                                     </select>

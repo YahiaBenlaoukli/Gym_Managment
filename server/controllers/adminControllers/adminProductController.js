@@ -89,8 +89,8 @@ export const adminAddProduct = async (req, res) => {
                 description: description,
                 current_price: price,
                 image_path: image_path,
-                stock: stock,
-                created_at: creation_date
+                stock: parseInt(stock),
+                created_at: new Date()
             }
         })
         console.log("Product added successfully.");
@@ -165,7 +165,7 @@ export const adminUpdateProduct = async (req, res) => {
                 id: parseInt(productId)
             },
             data: {
-                [field]: newattributes
+                [field]: isNaN(parseFloat(newattributes)) ? newattributes : parseFloat(newattributes)
             }
         })
         return res.status(200).json({ message: "Product updated successfully." });

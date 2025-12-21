@@ -107,22 +107,22 @@ const SearchPageId = () => {
     const productImages = product.images || [product.image_path];
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-secondary via-primary to-[#2d2d00] pb-10 px-2.5 sm:px-5" >
+        <div className="min-h-screen bg-gradient-to-br from-secondary via-primary to-[#2d2d00] pb-10" >
             <Navbar />
 
             <div className="max-w-7xl mx-auto mt-10 mb-20">
                 {/* Breadcrumb */}
-                <div className="text-inactive-text text-sm mb-6 flex items-center gap-2">
+                <div className="text-inactive-text text-sm mb-6 flex items-center gap-2 px-2.5 sm:px-5">
                     <button onClick={() => navigate(-1)} className="hover:text-accent transition">
                         ← Back
                     </button>
                     <span>/</span>
-                    <span className="hover:text-accent cursor-pointer">{product.category}</span>
+                    <button onClick={() => navigate(`/search?category=${encodeURIComponent(product.category)}`)} className="hover:text-accent cursor-pointer">{product.category}</button>
                     <span>/</span>
                     <span className="text-text-color">{product.name}</span>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 bg-secondary/50 backdrop-blur-sm p-6 rounded-2xl shadow-2xl">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 bg-white dark:bg-[rgba(26,26,26,0.95)] border border-gray-200 dark:border-accent/20 rounded-2xl p-6 shadow-2xl dark:shadow-[0_0_20px_rgba(255,235,59,0.15)] transition-all duration-300 px-2.5 sm:px-5">
                     {/* Image Gallery */}
                     <div className="space-y-4">
                         <div className="relative bg-primary/30 rounded-xl overflow-hidden aspect-square">
@@ -132,8 +132,8 @@ const SearchPageId = () => {
                                 className="w-full h-full object-cover"
                             />
                             {discount > 0 && (
-                                <div className="absolute top-4 left-4 bg-accent text-black px-3 py-1 rounded-full font-bold text-sm">
-                                    -{discount}%
+                                <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full font-bold text-sm shadow-lg z-10">
+                                    {discount}% OFF
                                 </div>
                             )}
                         </div>

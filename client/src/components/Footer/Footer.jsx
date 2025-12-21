@@ -7,29 +7,29 @@ const Footer = () => {
     const currentYear = new Date().getFullYear();
 
     return (
-        <footer className="bg-primary text-text-color border-t-2 border-accent/30">
+        <footer className="bg-gray-100 dark:bg-primary text-gray-900 dark:text-text-color border-t border-gray-200 dark:border-t-2 dark:border-accent/30 transition-colors duration-300">
             <div className="max-w-7xl mx-auto px-5 sm:px-6 py-12">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
                     <div className="space-y-4">
                         <div className="flex items-center gap-2 mb-4">
                             <FaDumbbell size={32} className="text-accent" />
-                            <h3 className="text-xl font-bold text-text-color">FitnessCity</h3>
+                            <h3 className="text-xl font-bold text-gray-900 dark:text-text-color">FitnessCity</h3>
                         </div>
-                        <p className="text-inactive-text text-sm leading-relaxed">
+                        <p className="text-gray-600 dark:text-inactive-text text-sm leading-relaxed">
                             Your ultimate destination for fitness equipment, courses, and wellness products.
                             Transform your fitness journey with quality gear and expert guidance.
                         </p>
                     </div>
 
                     <div className="space-y-4">
-                        <h3 className="text-lg font-bold text-text-color mb-4 border-b border-accent/30 pb-2">
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-text-color mb-4 border-b border-accent/30 pb-2">
                             Quick Links
                         </h3>
                         <ul className="space-y-2">
                             <li>
                                 <Link
                                     to="/dashboard"
-                                    className="text-inactive-text hover:text-accent transition-colors duration-300 text-sm flex items-center gap-2"
+                                    className="text-gray-600 dark:text-inactive-text hover:text-accent transition-colors duration-300 text-sm flex items-center gap-2"
                                 >
                                     <span className="text-accent">→</span> Home
                                 </Link>
@@ -74,7 +74,7 @@ const Footer = () => {
                             Contact Us
                         </h3>
                         <ul className="space-y-3">
-                            <li className="flex items-start gap-3 text-inactive-text text-sm">
+                            <li className="flex items-start gap-3 text-gray-600 dark:text-inactive-text text-sm">
                                 <MdEmail className="text-accent text-lg mt-0.5 flex-shrink-0" />
                                 <a
                                     href="mailto:support@fitnesscity.com"
@@ -103,10 +103,10 @@ const Footer = () => {
                     </div>
 
                     <div className="space-y-4">
-                        <h3 className="text-lg font-bold text-text-color mb-4 border-b border-accent/30 pb-2">
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-text-color mb-4 border-b border-accent/30 pb-2">
                             Follow Us
                         </h3>
-                        <p className="text-inactive-text text-sm mb-4">
+                        <p className="text-gray-600 dark:text-inactive-text text-sm mb-4">
                             Stay connected with us on social media for updates, tips, and exclusive offers!
                         </p>
                         <div className="flex gap-3 flex-wrap">
@@ -161,13 +161,13 @@ const Footer = () => {
 
                 <div className="border-t border-accent/30 pt-6 mt-8">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                        <p className="text-inactive-text text-sm text-center md:text-left">
+                        <p className="text-gray-500 dark:text-inactive-text text-sm text-center md:text-left">
                             © {currentYear} FitnessCity. All rights reserved.
                         </p>
                         <div className="flex gap-6 text-sm">
                             <Link
                                 to="/privacy-policy"
-                                className="text-inactive-text hover:text-accent transition-colors duration-300"
+                                className="text-gray-500 dark:text-inactive-text hover:text-accent transition-colors duration-300"
                             >
                                 Privacy Policy
                             </Link>
