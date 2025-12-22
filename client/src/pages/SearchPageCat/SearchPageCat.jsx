@@ -33,28 +33,28 @@ const SearchPage = () => {
     };
     if (loading)
         return (
-            <p className="text-center mt-10 text-text-color text-lg">
+            <p className="text-center mt-10 text-gray-900 dark:text-text-color text-lg">
                 Loading...
             </p>
         );
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-secondary via-primary to-[#2d2d00]">
+        <div className="min-h-screen bg-gray-50 dark:bg-gradient-to-br dark:from-secondary dark:via-primary dark:to-[#2d2d00] transition-colors duration-300">
             <Navbar />
             <div className="max-w-7xl mx-auto py-10 px-5 sm:px-10 md:py-15 lg:py-20">
-                <h1 className="text-3xl text-text-color font-bold mb-6">
-                    Search results for: <span className="text-accent">{category}</span>
+                <h1 className="text-3xl text-gray-900 dark:text-text-color font-bold mb-6">
+                    Search results for: <span className="text-yellow-600 dark:text-accent">{category}</span>
                 </h1>
 
                 {results.length === 0 && (
-                    <p classnName="text-inactive-text text-lg">No products found</p>
+                    <p className="text-gray-500 dark:text-inactive-text text-lg">No products found</p>
                 )}
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     {results.map((prod) => (
                         <div
                             key={prod.id}
-                            className="bg-white dark:bg-[rgba(26,26,26,0.95)] border border-gray-200 dark:border-accent/20 rounded-2xl p-4 h-full group hover:border-accent hover:shadow-lg dark:hover:shadow-[0_0_20px_rgba(255,235,59,0.15)] transition-all duration-300"
+                            className="bg-white dark:bg-[rgba(26,26,26,0.95)] border border-gray-200 dark:border-accent/20 rounded-2xl p-4 h-full group hover:border-yellow-500 dark:hover:border-accent hover:shadow-lg dark:hover:shadow-[0_0_20px_rgba(255,235,59,0.15)] transition-all duration-300"
                         >
                             <div className="relative overflow-hidden rounded-xl mb-4 aspect-[4/3]">
                                 {(prod.discount || (prod.old_price && prod.current_price && Math.round(((prod.old_price - prod.current_price) / prod.old_price) * 100))) > 0 && (
@@ -72,7 +72,7 @@ const SearchPage = () => {
                                         onClick={() => {
                                             handleProductClick(prod.id);
                                         }}
-                                        className="w-full bg-accent text-secondary py-2 rounded-lg font-bold text-sm uppercase tracking-wider hover:bg-white transition-colors"
+                                        className="w-full bg-yellow-500 dark:bg-accent text-white dark:text-secondary py-2 rounded-lg font-bold text-sm uppercase tracking-wider hover:bg-white transition-colors"
                                     >
                                         View Details
                                     </button>
@@ -83,7 +83,7 @@ const SearchPage = () => {
                                 <div className="flex justify-between items-start">
                                     <h3 className="text-gray-900 dark:text-white font-bold text-lg line-clamp-1">{prod.name}</h3>
                                     <div className="flex flex-col items-end">
-                                        <span className="text-accent font-bold">${prod.current_price || prod.price}</span>
+                                        <span className="text-yellow-600 dark:text-accent font-bold">${prod.current_price || prod.price}</span>
                                         {(prod.old_price || prod.originalPrice) && (
                                             <span className="text-gray-400 dark:text-inactive-text text-xs line-through">${prod.old_price || prod.originalPrice}</span>
                                         )}

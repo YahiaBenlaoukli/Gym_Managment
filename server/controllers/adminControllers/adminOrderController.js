@@ -77,13 +77,21 @@ export const getAllOrders = async (req, res) => {
     try {
         const rows = await prisma.orders.findMany({
             include: {
-                users: true,
-                products: true
-            },
-            orderBy: {
-                order_date: 'desc'
+                users: {
+                    select: {
+                        id: true,
+                        username: true,
+                        email: true
+                    }
+                },
+                order_items: {
+                    include: {
+                        products: true
+                    }
+                }
             }
         });
+
         if (rows.length === 0) {
             console.log('No orders');
             return res.status(200).json({ rows: [] });
@@ -129,6 +137,7 @@ export const deleteOrder = async (req, res) => {
             where: {
                 id: parseInt(order_id)
             }
+
         })
         return res.status(200).json({ message: "Order deleted successfully" });
     } catch (err) {
@@ -149,7 +158,7 @@ export const orderShipped = async (req, res) => {
                 id: parseInt(order_id)
             },
             data: {
-                status: "Shipped"
+                status: "shipped"
             },
             include: { users: true }
         });
@@ -206,7 +215,7 @@ export const orderDelivered = async (req, res) => {
                 id: parseInt(order_id)
             },
             data: {
-                status: "Delivered"
+                status: "delivered"
             },
             include: { users: true }
         });
@@ -240,7 +249,7 @@ export const orderCancelled = async (req, res) => {
                 id: parseInt(order_id)
             },
             data: {
-                status: "Cancelled"
+                status: "cancelled"
             },
             include: { users: true }
         });

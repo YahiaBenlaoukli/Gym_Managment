@@ -5,3 +5,151 @@ fixing the order dashboard
 fixing the light mode
 
 fixing cart logic
+
+
+
+export const confirmedOrder = async (req, res) => {
+    const { cartItemId, userLocation, userMobile, totalPrice } = req.body;
+    const user_id = req.user.id;
+    const user_email = req.user.email;
+    if (!cartItemId || !userLocation || !userMobile || !user_id || !user_email || !totalPrice) {
+        return res.status(400).json({ error: "All fields are required." });
+    }
+    try {
+        /*connection = await getConnection();
+        console.log("Connected to the database.");
+        const [cartItems] = await connection.promise().query(
+            "SELECT * FROM cart WHERE id = ? AND user_id = ?",
+            [cartItemId, user_id]
+        );*/
+        const cart = await prisma.carts.findMany({
+            where: {
+                id: parseInt(cartItemId),
+                user_id: parseInt(user_id)
+            }
+        });
+
+        if (cart.length === 0) {
+            return res.status(404).json({ error: "Cart item not found." });
+        }
+
+        /*const { product_id, quantity } = cartItems[0];
+        await connection.promise().query(
+            "UPDATE products SET stock = stock - ? WHERE id = ?",
+            [quantity, product_id]
+        );
+        const [result] = await connection.promise().query(
+            `INSERT INTO orders (user_id, product_id, quantity, location, mobile, order_date)
+             VALUES (?, ?, ?, ?, ?, ?)`,
+            [
+                user_id,
+                product_id,
+                quantity,
+                userLocation,
+                userMobile,
+                new Date().toISOString().split("T")[0],
+            ]
+        );
+        await connection.promise().query(
+            "DELETE FROM cart WHERE id = ?",
+            [cartItemId]
+        );*/
+        const { product_id, quantity } = cart[0];
+        await prisma.products.update({
+            where: {
+                id: parseInt(product_id)
+            },
+            data: {
+                stock: {
+                    decrement: parseInt(quantity)
+                }
+            }
+        })
+
+        const order = await prisma.orders.create({
+            data: {
+                user_id: parseInt(user_id),
+                location: userLocation,
+                mobile: userMobile,
+                order_date: new Date(),
+                total_amount: parseFloat(totalPrice)
+            }
+        })
+
+        const result = await prisma.orders.create({
+            data: {
+                user_id: parseInt(user_id),
+                product_id: parseInt(product_id),
+                quantity: parseInt(quantity),
+                location: userLocation,
+                mobile: userMobile,
+                order_date: new Date()
+            }
+        });
+
+        await transporter.sendMail({
+            from: process.env.AUTH_MAIL,
+            to: user_email,
+            subject: "Order Confirmation - Your Order has been placed",
+            html: `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Order Confirmation</title>
+                <style>
+                    body { margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4; }
+                    .container { max-width: 600px; margin: 0 auto; background-color: #1a1a0a; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+                    .header { background-color: #FFD700; padding: 20px; text-align: center; }
+                    .header h1 { margin: 0; color: #1a1a0a; font-size: 24px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; }
+                    .content { padding: 40px 30px; text-align: center; color: #ffffff; }
+                    .message { font-size: 16px; line-height: 1.6; color: #cccccc; margin-bottom: 30px; }
+                    .info-box { background-color: rgba(255, 215, 0, 0.1); border: 2px solid #FFD700; border-radius: 8px; padding: 20px; display: inline-block; margin-bottom: 30px; }
+                    .order-id { font-size: 28px; font-weight: bold; color: #FFD700; letter-spacing: 2px; margin: 0; font-family: 'Courier New', monospace; }
+                    .footer { background-color: #111107; padding: 20px; text-align: center; font-size: 12px; color: #666666; border-top: 1px solid #333; }
+                    .footer p { margin: 5px 0; }
+                </style>
+            </head>
+            <body>
+                <div style="padding: 20px;">
+                    <div class="container">
+                        <div class="header">
+                            <h1>Gym Management</h1>
+                        </div>
+                        <div class="content">
+                            <h2 style="color: #FFD700; margin-top: 0;">Order Confirmed!</h2>
+                            <p class="message">
+                                Thank you for your purchase. Your order has been placed successfully and is being processed.
+                            </p>
+                            
+                            <div class="info-box">
+                                <p class="order-id">Order #${result.id}</p>
+                            </div>
+                            
+                            <p class="message" style="font-size: 14px; margin-bottom: 0;">
+                                We will notify you once your items are shipped.<br>
+                                You can track your order status in your dashboard.
+                            </p>
+                        </div>
+                        <div class="footer">
+                            <p>&copy; ${new Date().getFullYear()} Gym Management System. All rights reserved.</p>
+                            <p>This is an automated message, please do not reply.</p>
+                        </div>
+                    </div>
+                </div>
+            </body>
+            </html>
+            `
+        });
+
+        return res.status(200).json({ message: "Order confirmed" });
+
+    } catch (error) {
+        console.error("Database error:", error);
+        return res.status(500).json({ error: "Internal server error." });
+
+    } finally {
+        connection.end();
+    }
+};

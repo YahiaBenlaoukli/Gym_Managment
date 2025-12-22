@@ -121,79 +121,88 @@ export const removeFromCart = async (req, res) => {
 };
 
 export const confirmedOrder = async (req, res) => {
-    const { cartItemId, userLocation, userMobile } = req.body;
-    const user_id = req.user.id;
-    const user_email = req.user.email;
-    if (!cartItemId || !userLocation || !userMobile) {
+    const { cartId, userLocation, userMobile } = req.body;
+    const userId = req.user.id;
+    const userEmail = req.user.email;
+
+    if (!cartId || !userLocation || !userMobile) {
         return res.status(400).json({ error: "All fields are required." });
     }
 
-    let connection;
-
     try {
-        /*connection = await getConnection();
-        console.log("Connected to the database.");
-        const [cartItems] = await connection.promise().query(
-            "SELECT * FROM cart WHERE id = ? AND user_id = ?",
-            [cartItemId, user_id]
-        );*/
-        const cartItems = await prisma.cart.findMany({
-            where: {
-                id: parseInt(cartItemId),
-                user_id: parseInt(user_id)
+        const order = await prisma.$transaction(async (tx) => {
+            // 1️⃣ Get cart with items
+            const cart = await tx.carts.findUnique({
+                where: {
+                    id: Number(cartId),
+                    user_id: Number(userId)
+                },
+                include: {
+                    cart_items: {
+                        include: {
+                            products: true
+                        }
+                    },
+                },
+
+            });
+
+            if (!cart || cart.cart_items.length === 0) {
+                throw new Error("Cart is empty or not found");
             }
-        });
 
-        if (cartItems.length === 0) {
-            return res.status(404).json({ error: "Cart item not found." });
-        }
+            // 2️⃣ Calculate total
+            const totalAmount = cart.cart_items.reduce(
+                (sum, item) => sum + Number(item.quantity) * Number(item.products.current_price),
+                0
+            );
+            console.log("Total amount:", totalAmount);
 
-        /*const { product_id, quantity } = cartItems[0];
-        await connection.promise().query(
-            "UPDATE products SET stock = stock - ? WHERE id = ?",
-            [quantity, product_id]
-        );
-        const [result] = await connection.promise().query(
-            `INSERT INTO orders (user_id, product_id, quantity, location, mobile, order_date)
-             VALUES (?, ?, ?, ?, ?, ?)`,
-            [
-                user_id,
-                product_id,
-                quantity,
-                userLocation,
-                userMobile,
-                new Date().toISOString().split("T")[0],
-            ]
-        );
-        await connection.promise().query(
-            "DELETE FROM cart WHERE id = ?",
-            [cartItemId]
-        );*/
-        const { product_id, quantity } = cartItems[0];
-        await prisma.products.update({
-            where: {
-                id: parseInt(product_id)
-            },
-            data: {
-                stock: {
-                    decrement: parseInt(quantity)
+            // 3️⃣ Create order
+            const order = await tx.orders.create({
+                data: {
+                    user_id: userId,
+                    location: userLocation,
+                    mobile: userMobile,
+                    order_date: new Date(),
+                    total_amount: totalAmount
                 }
+            });
+
+            // 4️⃣ Create order items + update stock
+            for (const item of cart.cart_items) {
+                if (item.products.stock < item.quantity) {
+                    throw new Error(`Insufficient stock for product ${item.products.id}`);
+                }
+
+                await tx.order_items.create({
+                    data: {
+                        order_id: order.id,
+                        product_id: item.product_id,
+                        quantity: item.quantity,
+                        price: item.products.current_price,
+                    }
+                });
+
+                await tx.products.update({
+                    where: { id: item.product_id },
+                    data: {
+                        stock: { decrement: item.quantity }
+                    }
+                });
             }
-        })
-        const result = await prisma.orders.create({
-            data: {
-                user_id: parseInt(user_id),
-                product_id: parseInt(product_id),
-                quantity: parseInt(quantity),
-                location: userLocation,
-                mobile: userMobile,
-                order_date: new Date()
-            }
+
+            // 5️⃣ Clear cart
+            await tx.cart_items.deleteMany({
+                where: { cart_id: cart.id }
+            });
+
+            return order;
         });
 
         await transporter.sendMail({
             from: process.env.AUTH_MAIL,
-            to: user_email,
+            to: userEmail,
             subject: "Order Confirmation - Your Order has been placed",
             html: `
             <!DOCTYPE html>
@@ -228,7 +237,7 @@ export const confirmedOrder = async (req, res) => {
                             </p>
                             
                             <div class="info-box">
-                                <p class="order-id">Order #${result.id}</p>
+                                <p class="order-id">Order #${order.id}</p>
                             </div>
                             
                             <p class="message" style="font-size: 14px; margin-bottom: 0;">
@@ -247,16 +256,18 @@ export const confirmedOrder = async (req, res) => {
             `
         });
 
-        return res.status(200).json({ message: "Order confirmed" });
+
+        return res.status(200).json({
+            message: "Order confirmed",
+            orderId: order.id
+        });
 
     } catch (error) {
-        console.error("Database error:", error);
-        return res.status(500).json({ error: "Internal server error." });
-
-    } finally {
-        connection.end();
+        console.error(error);
+        return res.status(400).json({ error: error.message });
     }
 };
+
 
 export const updateCartItemQuantity = async (req, res) => {
     const { cartItemId, newQuantity } = req.body;
@@ -271,7 +282,7 @@ export const updateCartItemQuantity = async (req, res) => {
             "UPDATE cart SET quantity = ? WHERE id = ?",
             [newQuantity, cartItemId]
         );*/
-        const result = await prisma.cart.update({
+        const result = await prisma.cart_items.update({
             where: {
                 id: parseInt(cartItemId)
             },
@@ -281,7 +292,6 @@ export const updateCartItemQuantity = async (req, res) => {
         })
         console.log("Cart item quantity updated.");
         return res.status(200).json({ message: "Cart item quantity updated." });
-        connection.end();
     } catch (error) {
         console.error("Database error:", error);
         return res.status(500).json({ error: "Internal server error." });
@@ -301,7 +311,7 @@ export const clearCart = async (req, res) => {
             "DELETE FROM cart WHERE userId = ?",
             [userId]
         );*/
-        const result = await prisma.cart.deleteMany({
+        const result = await prisma.carts.deleteMany({
             where: {
                 user_id: parseInt(userId)
             }

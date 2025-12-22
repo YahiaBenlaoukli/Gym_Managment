@@ -98,25 +98,25 @@ function OTPVerification() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-secondary via-primary to-[#2d2d00] flex flex-col items-center justify-center p-5">
+        <div className="min-h-screen bg-gray-50 dark:bg-gradient-to-br dark:from-secondary dark:via-primary dark:to-[#2d2d00] flex flex-col items-center justify-center p-5 transition-colors duration-300">
             <div className="flex flex-col items-center mb-5 gap-4 py-5">
-                <div className="bg-gradient-to-r from-accent to-hover w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center shadow-[0_5px_15px_rgba(255,235,59,0.3)]">
-                    <Dumbbell className="w-6 h-5 sm:w-8 sm:h-6 md:w-10 md:h-8 text-secondary" />
+                <div className="bg-gradient-to-r from-yellow-500 to-yellow-600 dark:from-accent dark:to-hover w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center shadow-lg dark:shadow-[0_5px_15px_rgba(255,235,59,0.3)]">
+                    <Dumbbell className="w-6 h-5 sm:w-8 sm:h-6 md:w-10 md:h-8 text-white dark:text-secondary" />
                 </div>
-                <div className="text-white text-2xl sm:text-3xl md:text-4xl font-bold drop-shadow-[0_0_20px_rgba(255,235,59,0.3)] tracking-tight text-center">
+                <div className="text-gray-900 dark:text-white text-2xl sm:text-3xl md:text-4xl font-bold drop-shadow-sm dark:drop-shadow-[0_0_20px_rgba(255,235,59,0.3)] tracking-tight text-center">
                     FitnessCity Gym
                 </div>
             </div>
 
-            <div className="flex flex-col items-center w-full max-w-md bg-[rgba(26,26,26,0.95)] backdrop-blur-sm border border-accent/20 rounded-2xl p-5 sm:p-6 md:p-8 shadow-[0_20px_40px_rgba(0,0,0,0.5),0_0_20px_rgba(255,235,59,0.1)]">
+            <div className="flex flex-col items-center w-full max-w-md bg-white dark:bg-[rgba(26,26,26,0.95)] backdrop-blur-sm border border-gray-200 dark:border-accent/20 rounded-2xl p-5 sm:p-6 md:p-8 shadow-xl dark:shadow-[0_20px_40px_rgba(0,0,0,0.5),0_0_20px_rgba(255,235,59,0.1)] transition-colors duration-300">
                 <div className="flex flex-col items-center justify-center gap-3 mt-5 w-full">
-                    <div className="text-white text-2xl sm:text-3xl md:text-4xl font-bold drop-shadow-[0_0_20px_rgba(255,235,59,0.3)] tracking-tight text-center">
+                    <div className="text-gray-900 dark:text-white text-2xl sm:text-3xl md:text-4xl font-bold drop-shadow-sm dark:drop-shadow-[0_0_20px_rgba(255,235,59,0.3)] tracking-tight text-center">
                         Verify OTP
                     </div>
-                    <div className="h-1 w-16 sm:w-20 bg-gradient-to-r from-white to-inactive-text rounded-sm shadow-[0_0_10px_rgba(255,235,59,0.5)]"></div>
+                    <div className="h-1 w-16 sm:w-20 bg-gradient-to-r from-yellow-500 to-yellow-600 dark:from-white dark:to-inactive-text rounded-sm shadow-sm dark:shadow-[0_0_10px_rgba(255,235,59,0.5)]"></div>
                 </div>
 
-                <div className="mt-6 text-inactive-text text-sm sm:text-base text-center px-2.5">
+                <div className="mt-6 text-gray-500 dark:text-inactive-text text-sm sm:text-base text-center px-2.5">
                     Enter the 4-digit code sent to your email
                 </div>
 
@@ -132,24 +132,24 @@ function OTPVerification() {
                             onChange={(e) => handleChange(index, e.target.value)}
                             onKeyDown={(e) => handleKeyDown(index, e)}
                             onPaste={handlePaste}
-                            className="w-14 h-14 sm:w-16 sm:h-16 md:w-18 md:h-18 bg-input-bg rounded-lg border-2 border-transparent transition-all duration-300 text-white text-2xl sm:text-3xl text-center font-bold outline-none focus:border-accent focus:shadow-[0_0_15px_rgba(255,235,59,0.3)]"
+                            className="w-14 h-14 sm:w-16 sm:h-16 md:w-18 md:h-18 bg-gray-100 dark:bg-input-bg rounded-lg border-2 border-transparent transition-all duration-300 text-gray-900 dark:text-white text-2xl sm:text-3xl text-center font-bold outline-none focus:border-yellow-500 dark:focus:border-accent shadow-sm focus:shadow-md dark:focus:shadow-[0_0_15px_rgba(255,235,59,0.3)]"
                         />
                     ))}
                 </div>
 
                 <div className="mt-8 w-full">
                     <div
-                        className="flex justify-center items-center w-full h-12 sm:h-14 rounded-full text-sm sm:text-base font-semibold cursor-pointer transition-all duration-300 border-none uppercase tracking-wide relative overflow-hidden bg-accent text-secondary hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(255,235,59,0.4)] active:translate-y-0 active:shadow-[0_5px_15px_rgba(255,235,59,0.3)]"
+                        className="flex justify-center items-center w-full h-12 sm:h-14 rounded-full text-sm sm:text-base font-semibold cursor-pointer transition-all duration-300 border-none uppercase tracking-wide relative overflow-hidden bg-yellow-500 dark:bg-accent text-white dark:text-secondary hover:-translate-y-0.5 hover:shadow-lg dark:hover:shadow-[0_10px_25px_rgba(255,235,59,0.4)] active:translate-y-0 active:shadow-md dark:active:shadow-[0_5px_15px_rgba(255,235,59,0.3)]"
                         onClick={handleVerify}
                     >
                         <span className="relative z-10">Verify</span>
                     </div>
                 </div>
 
-                <div className="mt-6 text-inactive-text text-sm sm:text-base text-center px-2.5">
+                <div className="mt-6 text-gray-500 dark:text-inactive-text text-sm sm:text-base text-center px-2.5">
                     Didn't receive the code?{" "}
                     <span
-                        className="text-accent cursor-pointer underline transition-colors duration-300 hover:text-hover"
+                        className="text-yellow-600 dark:text-accent cursor-pointer underline transition-colors duration-300 hover:text-yellow-700 dark:hover:text-hover"
                         onClick={handleResend}
                     >
                         Resend

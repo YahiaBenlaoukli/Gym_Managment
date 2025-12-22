@@ -4,7 +4,7 @@ import heroImage from "./hero.webp" // Import the image
 export default function Hero() {
     return (
         <section className="text-gray-900 dark:text-white py-16 md:py-24 max-w-7xl mx-auto border-b border-gray-200 dark:border-b-2 dark:border-accent mb-12 shadow-sm dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] backdrop-blur-sm rounded-lg bg-white/50 dark:bg-transparent">
-            <div className="max-w-7xl mx-auto px-4">
+            <div className="max-w-7xl mx-auto px-4 scale-[0.95] origin-center">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                     {/* Left Content */}
                     <div className="space-y-6">

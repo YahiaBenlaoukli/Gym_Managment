@@ -24,6 +24,7 @@ import cartRoutes from './routes/cart.js';
 import adminAuthRoutes from './routes/adminRoutes/adminAuth.js';
 import adminProductRoutes from './routes/adminRoutes/adminProduct.js';
 import adminOrderRoutes from './routes/adminRoutes/adminOrder.js';
+import adminDashboardRoutes from './routes/adminRoutes/adminDashboard.js';
 
 app.use(cors({
     origin: 'http://localhost:3001',
@@ -36,6 +37,7 @@ app.use('/api/cart', cartRoutes);
 app.use('/api/admin/auth', adminAuthRoutes);
 app.use('/api/admin/product', adminProductRoutes);
 app.use('/api/admin/order', adminOrderRoutes);
+app.use('/api/admin/dashboard', adminDashboardRoutes);
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`server running on port :${PORT}`);
