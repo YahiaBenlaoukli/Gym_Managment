@@ -27,7 +27,7 @@ import adminOrderRoutes from './routes/adminRoutes/adminOrder.js';
 import adminDashboardRoutes from './routes/adminRoutes/adminDashboard.js';
 
 app.use(cors({
-    origin: 'http://localhost:3001',
+    origin: process.env.FRONTEND_URL || 'http://localhost:3001',
     credentials: true
 }));
 

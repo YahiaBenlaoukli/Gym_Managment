@@ -1,6 +1,6 @@
 import axios from 'axios';
 const api = axios.create({
-    baseURL: 'http://localhost:3000/api',
+    baseURL: process.env.REACT_APP_BACKEND_URL || 'http://localhost:3000/api',
     withCredentials: true, // Crucial for sending the 'token' cookie
 });
 // This interceptor automatically handles unauthorized errors
