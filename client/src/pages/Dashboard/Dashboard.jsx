@@ -131,7 +131,11 @@ function Dashboard() {
                                                     </div>
                                                 )}
                                                 <img
-                                                    src={`${process.env.PHOTO_URL}${prod.image_path || "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=800"}`}
+                                                    src={
+                                                        prod?.image_path && process.env.PHOTO_URL
+                                                            ? `${process.env.PHOTO_URL}${prod.image_path}`
+                                                            : "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=800"
+                                                    }
                                                     alt={prod.name}
                                                     className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
                                                 />

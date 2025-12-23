@@ -63,8 +63,11 @@ const SearchPage = () => {
                                     </div>
                                 )}
                                 <img
-                                    src={`${process.env.PHOTO_URL}${prod.image_path}` || "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=800"}
-                                    alt={prod.name}
+                                    src={
+                                        prod?.image_path && process.env.PHOTO_URL
+                                            ? `${process.env.PHOTO_URL}${prod.image_path}`
+                                            : "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=800"
+                                    } alt={prod.name}
                                     className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
