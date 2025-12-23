@@ -97,7 +97,7 @@ export const login = async (req, res) => {
         }
         console.log("User logged in successfully.");
         const token = jwt.sign({ id: user.id, username: user.username, email: user.email, role: "user" }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
-        res.cookie('token', token, { httpOnly: true });
+        res.cookie('token', token, { httpOnly: true, secure: true, sameSite: 'None' });
         //await connection.end();
         return res.status(200).json({ message: "Login successful." });
     } catch (err) {
@@ -176,7 +176,7 @@ export const verifyOTP = async (req, res) => {
                     //await connection.end();
                     const [id, username] = [user_id, user_username,];
                     const token = jwt.sign({ id, username, email: user_email, role: "user" }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
-                    res.cookie('token', token, { httpOnly: true });
+                    res.cookie('token', token, { httpOnly: true, secure: true, sameSite: 'None' });
                     return res.status(200).json({ message: "Email verified successfully." });
                 }
             }

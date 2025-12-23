@@ -178,7 +178,7 @@ function Cart() {
                                 className="flex flex-col gap-5 rounded-2xl border border-gray-200 dark:border-accent/20 bg-white dark:bg-[rgba(26,26,26,0.95)] p-5 text-gray-900 dark:text-white shadow-lg dark:shadow-[0_20px_40px_rgba(0,0,0,0.4)] transition-all duration-300 hover:border-yellow-500 dark:hover:border-accent hover:-translate-y-1 hover:shadow-xl dark:hover:shadow-[0_25px_45px_rgba(0,0,0,0.55)] md:flex-row"
                             >
                                 <img
-                                    src={`http://localhost:3000${product.image_path}`}
+                                    src={`${process.env.PHOTO_URL}${product.image_path}`}
                                     alt={product.name}
                                     className="h-44 w-full rounded-2xl object-cover md:w-44"
                                     onError={e => {

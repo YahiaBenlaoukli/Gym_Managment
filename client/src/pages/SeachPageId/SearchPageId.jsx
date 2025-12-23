@@ -127,7 +127,7 @@ const SearchPageId = () => {
                     <div className="space-y-4">
                         <div className="relative bg-primary/30 rounded-xl overflow-hidden aspect-square">
                             <img
-                                src={`http://localhost:3000${productImages[selectedImage]}`}
+                                src={`${process.env.PHOTO_URL}${productImages[selectedImage]}`}
                                 alt={product.name}
                                 className="w-full h-full object-cover"
                             />
@@ -151,7 +151,7 @@ const SearchPageId = () => {
                                             }`}
                                     >
                                         <img
-                                            src={`http://localhost:3000${img}`}
+                                            src={`${process.env.PHOTO_URL}${img}`}
                                             alt={`${product.name} view ${idx + 1}`}
                                             className="w-full h-full object-cover"
                                         />

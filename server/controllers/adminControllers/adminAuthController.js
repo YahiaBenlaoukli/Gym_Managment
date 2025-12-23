@@ -26,7 +26,7 @@ export const loginAdmin = async (req, res) => {
             return res.status(401).json({ error: "Invalid email or password." });
         }
         const token = jwt.sign({ id: admin.id, email: admin.email, role: "admin" }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "1h" });
-        res.cookie('token', token, { httpOnly: true });
+        res.cookie('token', token, { httpOnly: true, secure: true, sameSite: 'None' });
         res.json({ message: "Login successful", token });
     } catch (error) {
         console.error("Database error:", error);
