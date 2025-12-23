@@ -132,8 +132,8 @@ function Dashboard() {
                                                 )}
                                                 <img
                                                     src={
-                                                        prod?.image_path && process.env.PHOTO_URL
-                                                            ? `${process.env.PHOTO_URL}${prod.image_path}`
+                                                        prod?.image_path && import.meta.env.PHOTO_URL
+                                                            ? `${import.meta.env.PHOTO_URL}${prod.image_path}`
                                                             : "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=800"
                                                     }
                                                     alt={prod.name}

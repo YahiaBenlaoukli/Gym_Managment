@@ -128,8 +128,8 @@ const SearchPageId = () => {
                         <div className="relative bg-primary/30 rounded-xl overflow-hidden aspect-square">
                             <img
                                 src={
-                                    product?.image_path && process.env.PHOTO_URL
-                                        ? `${process.env.PHOTO_URL}${product.image_path}`
+                                    product?.image_path && import.meta.env.PHOTO_URL
+                                        ? `${import.meta.env.PHOTO_URL}${product.image_path}`
                                         : "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=800"
                                 } alt={product.name}
                                 className="w-full h-full object-cover"
@@ -155,8 +155,8 @@ const SearchPageId = () => {
                                     >
                                         <img
                                             src={
-                                                img && process.env.PHOTO_URL
-                                                    ? `${process.env.PHOTO_URL}${img}`
+                                                img && import.meta.env.PHOTO_URL
+                                                    ? `${import.meta.env.PHOTO_URL}${img}`
                                                     : "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=800"
                                             }
                                             alt={`${product.name} view ${idx + 1}`}

@@ -185,7 +185,7 @@ const AdminOrders = () => {
                                                     <td className="px-6 py-4">
                                                         <div className="flex items-center gap-3">
                                                             {product.image_path ? (
-                                                                <img src={`${process.env.PHOTO_URL}${product.image_path}`} alt="" className="w-10 h-10 object-cover rounded bg-gray-200 dark:bg-white/10" />
+                                                                <img src={`${import.meta.env.PHOTO_URL}${product.image_path}`} alt="" className="w-10 h-10 object-cover rounded bg-gray-200 dark:bg-white/10" />
                                                             ) : (
                                                                 <div className="w-10 h-10 bg-gray-200 dark:bg-white/10 rounded flex items-center justify-center text-gray-500"><FaBox /></div>
                                                             )}
@@ -262,7 +262,7 @@ const AdminOrders = () => {
                                     {selectedOrder.order_items?.map((item, index) => (
                                         <div key={item.id || index} className="flex gap-4 p-4 bg-gray-50 dark:bg-white/5 rounded-xl border border-gray-200 dark:border-white/5 hover:border-yellow-500 dark:hover:border-white/10 transition-colors">
                                             {item.products?.image_path ? (
-                                                <img src={`${process.env.PHOTO_URL}${item.products.image_path}`} alt="" className="w-20 h-20 object-cover rounded-lg bg-white dark:bg-black/20" />
+                                                <img src={`${import.meta.env.PHOTO_URL}${item.products.image_path}`} alt="" className="w-20 h-20 object-cover rounded-lg bg-white dark:bg-black/20" />
                                             ) : (
                                                 <div className="w-20 h-20 bg-gray-200 dark:bg-white/10 rounded-lg flex items-center justify-center text-2xl text-gray-600"><FaBox /></div>
                                             )}
