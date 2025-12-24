@@ -164,7 +164,7 @@ const Products = () => {
                                     <input
                                         type="range"
                                         min="0"
-                                        max="2000"
+                                        max="10000"
                                         step="10"
                                         value={priceRange.max}
                                         onChange={(e) => setPriceRange({ ...priceRange, max: Number(e.target.value) })}
