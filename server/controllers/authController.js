@@ -193,7 +193,7 @@ const sendOTPverificationEmail = async ({ _id, email }) => {
         const otp = Math.floor(1000 + Math.random() * 9000);
 
         const mailOptions = {
-            from: process.env.AUTH_MAIL,
+            from: process.env.SENDGRID_FROM_EMAIL,
             to: email,
             subject: "Verify your email - Gym Management",
             html: `
@@ -279,8 +279,7 @@ const sendOTPverificationEmail = async ({ _id, email }) => {
         //await connection.end();
         console.log("SENDGRID_API_KEY exists:", !!process.env.SENDGRID_API_KEY);
         console.log("FROM:", process.env.SENDGRID_FROM_EMAIL);
-        const [response] = await sgMail.send(mailOptions);
-        console.log(response);
+        await sgMail.send(mailOptions);
         console.log(`Sending OTP ${otp} to email: ${email}`);
 
         return { success: true };
