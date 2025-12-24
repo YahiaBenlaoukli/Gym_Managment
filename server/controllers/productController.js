@@ -95,15 +95,10 @@ export const searchproductsbyname = async (req, res) => {
                     contains: q
                 }
             },
-            select: {
-                id: true,
-                name: true,
-                image_path: true
-            },
             orderBy: {
                 name: "asc"
             },
-            take: 10
+            take: 20
         });
         return res.status(200).json({ products });
     } catch (error) {

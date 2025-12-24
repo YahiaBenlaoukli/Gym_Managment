@@ -9,20 +9,22 @@ export default function Hero() {
                     {/* Left Content */}
                     <div className="space-y-6">
                         <h1 className="text-4xl md:text-6xl font-black leading-tight">
-                            Power Up Your <span className="text-yellow-600 dark:text-accent">Gym</span>
+                            Stay Always <span className="text-yellow-600 dark:text-accent">Fit</span>
                         </h1>
                         <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
                             Discover premium fitness equipment and accessories designed for serious athletes and home gym enthusiasts. Elevate your training with professional-grade gear.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4">
                             <button className="bg-accent text-secondary px-8 py-4 font-bold rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2 hover:shadow-[0_10px_25px_rgba(255,235,59,0.4)] hover:-translate-y-0.5"
-                                onClick={() => window.location.href = '/equipment'}
+                                onClick={() => {
+                                    const element = document.getElementById('categories');
+                                    if (element) {
+                                        element.scrollIntoView({ behavior: 'smooth' });
+                                    }
+                                }}
                             >
-                                Explore Equipment
+                                Explore Categories
                                 <ArrowRight size={20} />
-                            </button>
-                            <button className="border-2 border-yellow-600 dark:border-accent text-yellow-600 dark:text-accent px-8 py-4 font-bold rounded-xl hover:bg-yellow-600/10 dark:hover:bg-accent/10 transition-colors">
-                                View Deals
                             </button>
                         </div>
                     </div>

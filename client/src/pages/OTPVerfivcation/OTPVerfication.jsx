@@ -5,6 +5,8 @@ import api from "../../services/api";
 
 function OTPVerification() {
     const [otp, setOtp] = useState(["", "", "", ""]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
     const navigate = useNavigate();
     const inputRefs = useRef([]);
     const location = useLocation();
@@ -65,36 +67,39 @@ function OTPVerification() {
     const handleVerify = async (e) => {
         if (e) e.preventDefault();
 
+        setError("");
         const otpCode = otp.join("");
         if (otpCode.length !== 4) {
-            alert("Please enter all 4 digits");
+            setError("Please enter all 4 digits");
             return;
         }
 
-        // Your API call here
-        console.log("OTP:", otpCode);
-        alert(`OTP entered: ${otpCode}`);
+        setLoading(true);
         try {
             const res = await api.post('auth/verify_otp', { user_id: userId, user_username: userUsername, user_email: userEmail, otp: otpCode });
             console.log(res);
-            alert("OTP verified successfully");
             navigate('/');
         } catch (err) {
-            alert(err.response?.data?.message || "Verification failed ❌");
+            setError(err.response?.data?.message || "Verification failed");
+        } finally {
+            setLoading(false);
         }
     };
 
     const handleResend = async () => {
-        // Your API call here
-        console.log("Resending OTP...");
-        alert("OTP resent!");
-        // Example:
-        // try {
-        //     const res = await api.post('auth/resend-otp');
-        //     alert("OTP resent successfully");
-        // } catch (err) {
-        //     alert(err.response?.data?.message || "Resend failed ❌");
-        // }
+        if (loading) return;
+        setLoading(true);
+        setError("");
+        try {
+            // Your API call here
+            // await api.post('auth/resend-otp');
+            console.log("Resending OTP...");
+            alert("OTP resent!"); // Keeping alert for success message as per original flow or could be a toast
+        } catch (err) {
+            setError(err.response?.data?.message || "Resend failed");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -115,6 +120,12 @@ function OTPVerification() {
                     </div>
                     <div className="h-1 w-16 sm:w-20 bg-gradient-to-r from-yellow-500 to-yellow-600 dark:from-white dark:to-inactive-text rounded-sm shadow-sm dark:shadow-[0_0_10px_rgba(255,235,59,0.5)]"></div>
                 </div>
+
+                {error && (
+                    <div className="mt-4 w-full bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-3 rounded-lg text-sm text-center border border-red-200 dark:border-red-900/50">
+                        {error}
+                    </div>
+                )}
 
                 <div className="mt-6 text-gray-500 dark:text-inactive-text text-sm sm:text-base text-center px-2.5">
                     Enter the 4-digit code sent to your email
@@ -140,19 +151,24 @@ function OTPVerification() {
                 <div className="mt-8 w-full">
                     <div
                         className="flex justify-center items-center w-full h-12 sm:h-14 rounded-full text-sm sm:text-base font-semibold cursor-pointer transition-all duration-300 border-none uppercase tracking-wide relative overflow-hidden bg-yellow-500 dark:bg-accent text-white dark:text-secondary hover:-translate-y-0.5 hover:shadow-lg dark:hover:shadow-[0_10px_25px_rgba(255,235,59,0.4)] active:translate-y-0 active:shadow-md dark:active:shadow-[0_5px_15px_rgba(255,235,59,0.3)]"
-                        onClick={handleVerify}
+                        onClick={() => {
+                            if (loading) return;
+                            handleVerify();
+                        }}
                     >
-                        <span className="relative z-10">Verify</span>
+                        <span className="relative z-10">
+                            {loading ? "Verifying..." : "Verify"}
+                        </span>
                     </div>
                 </div>
 
                 <div className="mt-6 text-gray-500 dark:text-inactive-text text-sm sm:text-base text-center px-2.5">
                     Didn't receive the code?{" "}
                     <span
-                        className="text-yellow-600 dark:text-accent cursor-pointer underline transition-colors duration-300 hover:text-yellow-700 dark:hover:text-hover"
+                        className={`text-yellow-600 dark:text-accent cursor-pointer underline transition-colors duration-300 hover:text-yellow-700 dark:hover:text-hover ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
                         onClick={handleResend}
                     >
-                        Resend
+                        {loading ? "Sending..." : "Resend"}
                     </span>
                 </div>
             </div>

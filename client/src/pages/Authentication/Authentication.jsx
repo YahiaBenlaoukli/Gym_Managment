@@ -17,6 +17,8 @@ function Authentication() {
         email: "",
         password: ""
     });
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
     const navigate = useNavigate();
     const { theme, toggleTheme } = useTheme();
@@ -30,25 +32,31 @@ function Authentication() {
 
     const handleSignup = async (e) => {
         if (e) e.preventDefault();
+        setLoading(true);
+        setError("");
         try {
             const res = await api.post('auth/register', signupData);
             console.log(res);
-            alert("Signup successful");
-            navigate(`/verify_otp?user_id=${encodeURIComponent(res.data.userId)}&user_username=${encodeURIComponent(signupData.username)}`);
+            navigate(`/verify_otp?user_id=${encodeURIComponent(res.data.userId)}&user_username=${encodeURIComponent(signupData.username)}&user_email=${encodeURIComponent(signupData.email)}`);
         } catch (err) {
-            alert(err.response?.data?.message || "Signup failed ❌");
+            setError(err.response?.data?.message || "Signup failed");
+        } finally {
+            setLoading(false);
         }
     };
 
     const handleLogin = async (e) => {
         if (e) e.preventDefault();
+        setLoading(true);
+        setError("");
         try {
             const res = await api.post('auth/login', loginData);
             console.log(res);
-            alert("Login successful");
             navigate('/');
         } catch (err) {
-            alert(err.response?.data?.message || "Login failed ❌");
+            setError(err.response?.data?.message || "Login failed");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -78,8 +86,15 @@ function Authentication() {
                         <div className="text-gray-900 dark:text-white text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-center">
                             {action}
                         </div>
-                        <div className="h-1 w-16 sm:w-20 bg-yellow-500 rounded-full"></div>
                     </div>
+                    <div className="h-1 w-16 sm:w-20 bg-yellow-500 rounded-full"></div>
+
+                    {error && (
+                        <div className="mt-4 w-full bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-3 rounded-lg text-sm text-center border border-red-200 dark:border-red-900/50">
+                            {error}
+                        </div>
+                    )}
+
                     <div className="mt-8 flex flex-col gap-4 w-full">
                         {action === "Sign Up" && (
                             <div className="flex items-center w-full h-14 sm:h-16 md:h-18 bg-gray-100 dark:bg-input-bg rounded-lg border-2 border-transparent transition-all duration-300 relative overflow-hidden focus-within:border-yellow-500 focus-within:shadow-[0_0_15px_rgba(255,235,59,0.3)]">
@@ -130,14 +145,18 @@ function Authentication() {
                                 : "bg-yellow-500 dark:bg-accent text-white dark:text-secondary hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0"
                                 }`}
                             onClick={() => {
+                                if (loading) return;
                                 if (action === "Login") {
                                     setAction("Sign Up");
+                                    setError("");
                                 } else {
                                     handleSignup();
                                 }
                             }}
                         >
-                            <span className="relative z-10">Sign Up</span>
+                            <span className="relative z-10">
+                                {loading && action === "Sign Up" ? "Signing up..." : "Sign Up"}
+                            </span>
                         </div>
                         <div
                             className={`flex justify-center items-center w-full h-12 sm:h-14 rounded-full text-sm sm:text-base font-semibold cursor-pointer transition-all duration-300 border-none uppercase tracking-wide relative overflow-hidden ${action === "Sign Up"
@@ -145,14 +164,18 @@ function Authentication() {
                                 : "bg-yellow-500 dark:bg-accent text-white dark:text-secondary hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0"
                                 }`}
                             onClick={() => {
+                                if (loading) return;
                                 if (action === "Sign Up") {
                                     setAction("Login");
+                                    setError("");
                                 } else {
                                     handleLogin();
                                 }
                             }}
                         >
-                            <span className="relative z-10">Log in</span>
+                            <span className="relative z-10">
+                                {loading && action === "Login" ? "Logging in..." : "Log in"}
+                            </span>
                         </div>
                     </div>
                 </div>

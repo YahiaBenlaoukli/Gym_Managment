@@ -7,7 +7,6 @@ router.get("/showAllProducts", productController.showallproducts);
 router.post("/showProductDetails", productController.showproductdetails);
 router.post("/searchProductsByName", productController.searchproductsbyname);
 router.get("/getDiscountedProducts", productController.getDiscountedProducts);
-router.get("/getDiscountedProducts", productController.getDiscountedProducts);
 
 
 export default router;

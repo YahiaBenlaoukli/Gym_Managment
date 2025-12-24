@@ -3,15 +3,19 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import prisma from "../services/prisma.js";
 import nodemailer from "nodemailer";
-import { parse } from "path";
+import sgMail from "@sendgrid/mail";
 
-const transporter = nodemailer.createTransport({
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+
+/*const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     auth: {
         user: process.env.AUTH_MAIL,
         pass: process.env.AUTH_PASS
     }
-});
+});*/
 
 export const newUser = async (req, res) => {
     const { username, email, password } = req.body;
@@ -31,17 +35,13 @@ export const newUser = async (req, res) => {
             [email, username]
         );*/
 
-        const existingUsers = await prisma.users.findMany({
-            where: {
-                OR: [
-                    { email: email },
-                    { username: username }
-                ]
-            }
-        })
+        const existingUser = await prisma.users.findMany({
+            where: { email }
+        });
 
-        if (existingUsers.length > 0) {
-            return res.status(409).json({ error: "User already exists with this email or username." });
+
+        if (existingUser.length > 0) {
+            return res.status(409).json({ error: "User already exists with this email" });
         }
 
         const hashedpw = await bcrypt.hash(password, 10);
@@ -277,9 +277,10 @@ const sendOTPverificationEmail = async ({ _id, email }) => {
         })
 
         //await connection.end();
-
-        await transporter.sendMail(mailOptions);
-
+        console.log("SENDGRID_API_KEY exists:", !!process.env.SENDGRID_API_KEY);
+        console.log("FROM:", process.env.SENDGRID_FROM_EMAIL);
+        const [response] = await sgMail.send(mailOptions);
+        console.log(response);
         console.log(`Sending OTP ${otp} to email: ${email}`);
 
         return { success: true };

@@ -9,6 +9,7 @@ import ProductDetails from "./pages/SeachPageId/SearchPageId.jsx";
 import OTPVerification from "./pages/OTPVerfivcation/OTPVerfication.jsx";
 import Cart from "./pages/Cart/Cart.jsx";
 import Settings from "./pages/Settings/Settings.jsx";
+import Products from "./pages/Products/Products.jsx";
 
 //admin components
 import AdminLogin from "./pages/AdminAuthentication/AdminAuthentication.jsx";
@@ -30,6 +31,7 @@ function App() {
           <Route path="/admin/products" element={<AdminProductManagement />} />
           <Route path="/admin/orders" element={<AdminOrders />} />
           <Route path="/search" element={<SearchPage />} />
+          <Route path="/products" element={<Products />} />
           <Route path="/product" element={<ProductDetails />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/settings" element={<Settings />} />

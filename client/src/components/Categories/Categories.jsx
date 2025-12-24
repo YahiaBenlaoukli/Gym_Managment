@@ -114,7 +114,7 @@ function ShopByCategory() {
     };
 
     return (
-        <div className="min-h-screen pb-10 px-2.5 sm:px-5">
+        <div id="categories" className="min-h-screen pb-10 px-2.5 sm:px-5">
             <div className="max-w-[1400px] mx-auto py-10 px-2.5 sm:px-10 md:py-15 lg:py-20">
                 <div className="text-center mb-8 sm:mb-10">
                     <h1 className="text-gray-900 dark:text-white text-3xl sm:text-4xl lg:text-5xl font-bold mb-2.5 drop-shadow-sm dark:drop-shadow-[0_0_20px_rgba(255,235,59,0.3)] tracking-tight">

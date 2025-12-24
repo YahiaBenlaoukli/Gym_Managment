@@ -139,8 +139,7 @@ const Navbar = () => {
             <div className="py-2">
               {[
                 { path: '/', label: 'Home' },
-                { path: '/payments', label: 'Payments' },
-                { path: '/schedule', label: 'Schedule' },
+                { path: '/products', label: 'Products' },
                 { path: '/settings', label: 'Settings' }
               ].map((link) => (
                 <Link
@@ -238,15 +237,6 @@ const Navbar = () => {
                   <p className="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider mb-1">Signed in as</p>
                   <p className="text-sm font-bold text-gray-900 dark:text-white truncate">{user?.username}</p>
                 </div>
-
-                <Link
-                  to="/profile"
-                  onClick={() => setIsUserDropdownOpen(false)}
-                  className="flex items-center gap-3 px-5 py-3 text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-yellow-600 dark:hover:text-accent hover:bg-[rgba(255,235,59,0.1)] transition-colors border-l-4 border-transparent hover:border-yellow-600 dark:hover:border-accent"
-                >
-                  <FaUserCircle size={20} className="text-lg" />
-                  Your Profile
-                </Link>
 
                 <div className="h-px bg-gray-100 dark:bg-white/10 my-1 mx-4"></div>
 

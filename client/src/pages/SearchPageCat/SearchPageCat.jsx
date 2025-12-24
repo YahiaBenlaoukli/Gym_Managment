@@ -9,6 +9,7 @@ const SearchPage = () => {
     const location = useLocation();
     const params = new URLSearchParams(location.search);
     const category = params.get("category");
+    const query = params.get("q");
 
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -16,9 +17,18 @@ const SearchPage = () => {
 
     useEffect(() => {
         const fetchData = async () => {
+            setLoading(true);
             try {
-                const res = await api.post("product/showProductsByCategory", { category });
-                setResults(res.data.products || []);
+                let res;
+                if (query) {
+                    res = await api.post("product/searchProductsByName", { q: query });
+                } else if (category) {
+                    res = await api.post("product/showProductsByCategory", { category });
+                }
+
+                if (res) {
+                    setResults(res.data.products || []);
+                }
             } catch (err) {
                 console.log("Search error:", err.response?.data || err);
             }
@@ -26,7 +36,7 @@ const SearchPage = () => {
         };
 
         fetchData();
-    }, [category]);
+    }, [category, query]);
 
     const handleProductClick = (productId) => {
         navigate(`/product?id=${encodeURIComponent(productId)}`);
@@ -43,7 +53,7 @@ const SearchPage = () => {
             <Navbar />
             <div className="max-w-7xl mx-auto py-10 px-5 sm:px-10 md:py-15 lg:py-20">
                 <h1 className="text-3xl text-gray-900 dark:text-text-color font-bold mb-6">
-                    Search results for: <span className="text-yellow-600 dark:text-accent">{category}</span>
+                    Search results for: <span className="text-yellow-600 dark:text-accent">{query || category}</span>
                 </h1>
 
                 {results.length === 0 && (
