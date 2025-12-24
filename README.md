@@ -63,6 +63,7 @@ This is a comprehensive e-commerce platform designed for gym and fitness equipme
 - **Node.js** - Runtime environment
 - **Express.js 5.1** - Web framework
 - **MySQL2** - Database driver
+- **Prisma** - ORM (Object-Relational Mapping)
 - **JWT (jsonwebtoken)** - Authentication tokens
 - **bcrypt** - Password hashing
 - **cookie-parser** - Cookie management
@@ -87,72 +88,13 @@ cd Gym_Managment
 
 ### Step 2: Database Setup
 
-1. Create a MySQL database:
-```sql
-CREATE DATABASE gym_management;
-```
+1.  Navigate to the `server` directory.
+2.  Create a `.env` file with your `DATABASE_URL`.
+3.  Run the Prisma migration to set up your database schema:
+    ```bash
+    npx prisma db push
+    ```
 
-2. Create the required tables. Here's the basic schema:
-
-```sql
--- Users table
-CREATE TABLE users (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    username VARCHAR(255) UNIQUE NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Products table
-CREATE TABLE products (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(255) NOT NULL,
-    category VARCHAR(255) NOT NULL,
-    description TEXT,
-    current_price DECIMAL(10, 2) NOT NULL,
-    old_price DECIMAL(10, 2),
-    image_path VARCHAR(255),
-    images TEXT,
-    stock INT DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Cart table
-CREATE TABLE cart (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT NOT NULL,
-    product_id INT NOT NULL,
-    quantity INT NOT NULL DEFAULT 1,
-    created_at DATE,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
-);
-
--- Orders table
-CREATE TABLE orders (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT NOT NULL,
-    product_id INT NOT NULL,
-    quantity INT NOT NULL,
-    total_price DECIMAL(10, 2) NOT NULL,
-    user_location TEXT NOT NULL,
-    user_mobile VARCHAR(20) NOT NULL,
-    status VARCHAR(50) DEFAULT 'pending',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (product_id) REFERENCES products(id)
-);
-
--- Admin table (if separate from users)
-CREATE TABLE admins (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    username VARCHAR(255) UNIQUE NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-```
 
 ### Step 3: Backend Setup
 
