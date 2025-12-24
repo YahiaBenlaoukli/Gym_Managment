@@ -1,18 +1,21 @@
 import prisma from "../../services/prisma.js";
 import nodemailer from "nodemailer";
+import sgMail from "@sendgrid/mail";
 
-const transporter = nodemailer.createTransport({
+/*const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     auth: {
         user: process.env.AUTH_MAIL,
         pass: process.env.AUTH_PASS
     }
-});
+});*/
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const sendOrderEmail = async (email, subject, title, message, orderId) => {
     try {
         const mailOptions = {
-            from: process.env.AUTH_MAIL,
+            from: process.env.SENDGRID_FROM_EMAIL,
             to: email,
             subject: subject,
             html: `
@@ -66,7 +69,8 @@ const sendOrderEmail = async (email, subject, title, message, orderId) => {
             </html>
             `
         };
-        await transporter.sendMail(mailOptions);
+        //await transporter.sendMail(mailOptions);
+        await sgMail.send(mailOptions);
         console.log(`Email sent to ${email} for Order #${orderId}`);
     } catch (err) {
         console.error("Error sending email:", err);

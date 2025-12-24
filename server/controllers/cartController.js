@@ -1,16 +1,17 @@
 import getConnection from '../services/db.js';
 import prisma from "../services/prisma.js";
+import sgMail from "@sendgrid/mail";
+//import nodemailer from "nodemailer";
 
-
-import nodemailer from "nodemailer";
-
-const transporter = nodemailer.createTransport({
+/*const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     auth: {
         user: process.env.AUTH_MAIL,
         pass: process.env.AUTH_PASS
     }
-});
+});*/
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 export const addToCart = async (req, res) => {
     const { user_id, product_id, quantity } = req.body;
@@ -134,8 +135,8 @@ export const confirmedOrder = async (req, res) => {
             // 1️⃣ Get cart with items
             const cart = await tx.carts.findUnique({
                 where: {
-                    id: Number(cartId),
-                    user_id: Number(userId)
+                    id: parseInt(cartId),
+                    user_id: parseInt(userId)
                 },
                 include: {
                     cart_items: {
@@ -177,31 +178,31 @@ export const confirmedOrder = async (req, res) => {
 
                 await tx.order_items.create({
                     data: {
-                        order_id: order.id,
-                        product_id: item.product_id,
-                        quantity: item.quantity,
-                        price: item.products.current_price,
+                        order_id: parseInt(order.id),
+                        product_id: parseInt(item.product_id),
+                        quantity: parseInt(item.quantity),
+                        price: parseInt(item.products.current_price),
                     }
                 });
 
                 await tx.products.update({
-                    where: { id: item.product_id },
+                    where: { id: parseInt(item.product_id) },
                     data: {
-                        stock: { decrement: item.quantity }
+                        stock: { decrement: parseInt(item.quantity) }
                     }
                 });
             }
 
             // 5️⃣ Clear cart
             await tx.cart_items.deleteMany({
-                where: { cart_id: cart.id }
+                where: { cart_id: parseInt(cart.id) }
             });
 
             return order;
         });
 
-        await transporter.sendMail({
-            from: process.env.AUTH_MAIL,
+        await sgMail.send({
+            from: process.env.SENDGRID_FROM_EMAIL,
             to: userEmail,
             subject: "Order Confirmation - Your Order has been placed",
             html: `
@@ -259,7 +260,7 @@ export const confirmedOrder = async (req, res) => {
 
         return res.status(200).json({
             message: "Order confirmed",
-            orderId: order.id
+            orderId: parseInt(order.id)
         });
 
     } catch (error) {
