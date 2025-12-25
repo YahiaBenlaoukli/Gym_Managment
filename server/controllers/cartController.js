@@ -166,7 +166,7 @@ export const confirmedOrder = async (req, res) => {
                     location: userLocation,
                     mobile: parseInt(userMobile),
                     order_date: new Date(),
-                    total_amount: parseInt(totalAmount);
+                    total_amount: parseInt(totalAmount)
                 }
             });
 
