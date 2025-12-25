@@ -162,11 +162,11 @@ export const confirmedOrder = async (req, res) => {
             // 3️⃣ Create order
             const order = await tx.orders.create({
                 data: {
-                    user_id: userId,
+                    user_id: parseInt(userId),
                     location: userLocation,
-                    mobile: userMobile,
+                    mobile: parseInt(userMobile),
                     order_date: new Date(),
-                    total_amount: totalAmount
+                    total_amount: parseInt(totalAmount);
                 }
             });
 
