@@ -164,7 +164,7 @@ export const confirmedOrder = async (req, res) => {
                 data: {
                     user_id: parseInt(userId),
                     location: userLocation,
-                    mobile: parseInt(userMobile),
+                    mobile: userMobile,
                     order_date: new Date(),
                     total_amount: parseInt(totalAmount)
                 }
