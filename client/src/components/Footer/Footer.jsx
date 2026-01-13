@@ -16,7 +16,7 @@ const Footer = () => {
                             <h3 className="text-xl font-bold text-white">FitnessCity</h3>
                         </div>
                         <p className="text-gray-400 text-sm leading-relaxed">
-                            Your ultimate destination for fitness equipment, courses, and wellness products.
+                            Your ultimate destination for fitness equipment and wellness products.
                             Transform your fitness journey with quality gear and expert guidance.
                         </p>
                     </div>
@@ -39,7 +39,7 @@ const Footer = () => {
                                     to="/cart"
                                     className="text-gray-400 hover:text-yellow-500 transition-colors duration-300 text-sm flex items-center gap-2"
                                 >
-                                    <span className="text-yellow-500">→</span> Courses
+                                    <span className="text-yellow-500">→</span> Cart
                                 </Link>
                             </li>
                             <li>
