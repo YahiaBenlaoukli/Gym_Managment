@@ -52,6 +52,7 @@ function Authentication() {
         try {
             const res = await api.post('auth/login', loginData);
             console.log(res);
+            localStorage.setItem('token', res.data.token);
             navigate('/');
         } catch (err) {
             setError(err.response?.data?.message || "Login failed");
